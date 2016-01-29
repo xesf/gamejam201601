@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Microsoft.Graphics.Canvas.UI.Xaml;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -25,6 +27,12 @@ namespace SensorialRhythm
         public MainPage()
         {
             this.InitializeComponent();
+        }
+
+        void CanvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
+        {
+            //args.DrawingSession.DrawEllipse(155, 115, 80, 30, Colors.Black, 3);
+            args.DrawingSession.DrawText("Hello, world!", 100, 100, Colors.Yellow);
         }
     }
 }
