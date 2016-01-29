@@ -10,7 +10,7 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid>
-            <canvas:CanvasControl Draw="CanvasControl_Draw" ClearColor="CornflowerBlue"/>
+            <canvas:CanvasAnimatedControl Draw="CanvasAnimatedControl_Draw" ClearColor="CornflowerBlue"/>
         </Grid>
     </Grid>
 </Page>

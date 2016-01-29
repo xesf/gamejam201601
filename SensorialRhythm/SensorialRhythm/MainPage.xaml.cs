@@ -1060,13 +1060,14 @@ namespace SensorialRhythm
             
         }
 
-        void CanvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
+        private void CanvasAnimatedControl_Draw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
+        //void CanvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             sender.ClearColor = Colors.Black;
             var rndIdx = RAND.Next(0, randomColors.Length);
 
-            Vector2 centerScreen = new Vector2((float)sender.ActualWidth / 2, ((float)sender.ActualHeight / 2f) + 20);
-            Vector2 centerShadow = new Vector2((float)sender.ActualWidth / 2, ((float)sender.ActualHeight / 2f) + 180);
+            Vector2 centerScreen = new Vector2((float)sender.Size.Width / 2, ((float)sender.Size.Height / 2f) + 20);
+            Vector2 centerShadow = new Vector2((float)sender.Size.Width / 2, ((float)sender.Size.Height / 2f) + 180);
 
 
             //args.DrawingSession.DrawEllipse(155, 115, 80, 30, Colors.Black, 3);
@@ -1117,5 +1118,7 @@ namespace SensorialRhythm
             //SpheroCircle sphero3 = new SpheroCircle(150, Colors.Red);
             //sphero3.Draw(circleCenter, args.DrawingSession);
         }
+
+        
     }
 }
