@@ -1011,14 +1011,17 @@ namespace SensorialRhythm
         Colors.YellowGreen
         };
 
+        Random RAND = new Random(DateTime.Now.Millisecond);
+
         public class SpheroColor {
             public Color _main;
             public Color _inner;
             public Color _outter;
+            public Color _glow;
 
             public SpheroColor(Color color)
             {
-                
+                //_glow = Color.FromArgb((byte)(Math.Max(color.A - 240, 0)), color.R, color.G, color.B);
                 _main = Color.FromArgb(color.A, color.R, color.G, color.B);
                 _inner = Color.FromArgb((byte)(Math.Max(color.A - 50,0)), (byte)(Math.Max(color.R - 50, 0)), (byte)(Math.Max(color.G - 50, 0)), (byte)(Math.Max(color.B - 50, 0)));
                 _outter = Color.FromArgb((byte)(Math.Max(color.A - 100, 0)), (byte)(Math.Max(color.R - 100, 0)), (byte)(Math.Max(color.G - 100, 0)), (byte)(Math.Max(color.B - 100, 0)));
@@ -1038,9 +1041,11 @@ namespace SensorialRhythm
 
             public void Draw(Vector2 pos, CanvasDrawingSession canvas)
             {
+                //canvas.FillCircle(pos, _radius + 30, _color._glow);
                 canvas.FillCircle(pos, _radius - 18, _color._main);
                 canvas.FillCircle(pos, _radius - 5, _color._inner);
                 canvas.FillCircle(pos, _radius, _color._outter);
+                
 
                 canvas.FillEllipse(new Vector2(pos.X, pos.Y - 60), _radius - 60, _radius - 90, Color.FromArgb(50, 255, 255, 255)); 
             }
@@ -1058,9 +1063,10 @@ namespace SensorialRhythm
         void CanvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             sender.ClearColor = Colors.Black;
+            var rndIdx = RAND.Next(0, randomColors.Length);
 
-            Vector2 centerScreen = new Vector2((float)sender.ActualWidth / 2, (float)sender.ActualHeight / 2f);
-            Vector2 centerShadow = new Vector2((float)sender.ActualWidth / 2, ((float)sender.ActualHeight / 2f) + 150);
+            Vector2 centerScreen = new Vector2((float)sender.ActualWidth / 2, ((float)sender.ActualHeight / 2f) + 20);
+            Vector2 centerShadow = new Vector2((float)sender.ActualWidth / 2, ((float)sender.ActualHeight / 2f) + 180);
 
 
             //args.DrawingSession.DrawEllipse(155, 115, 80, 30, Colors.Black, 3);
@@ -1069,7 +1075,7 @@ namespace SensorialRhythm
 
             var gradientStops = new CanvasGradientStop[]
             {
-                new CanvasGradientStop { Position = 0, Color = Color.FromArgb(100, 0,255,0) },
+                new CanvasGradientStop { Position = 0, Color = randomColors[rndIdx] },
                 new CanvasGradientStop { Position = 1, Color = Colors.Transparent }
             };
 
@@ -1091,8 +1097,8 @@ namespace SensorialRhythm
                 args.DrawingSession.FillEllipse(centerShadow, 300, 50, brush);
             }
 
-            var rnd = new Random(DateTime.Now.Millisecond);
-            var rndIdx = rnd.Next(0, randomColors.Length);
+            
+            
             // Color.FromArgb(255,0,192,0) // green
             SpheroCircle sphero = new SpheroCircle(150, randomColors[rndIdx]);
             sphero.Draw(centerScreen, args.DrawingSession);
