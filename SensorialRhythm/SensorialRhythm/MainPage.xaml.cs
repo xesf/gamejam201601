@@ -27,8 +27,6 @@ namespace SensorialRhythm
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        
-
         public class SpheroColor {
             public Color _main;
             public Color _inner;
@@ -68,27 +66,64 @@ namespace SensorialRhythm
         public MainPage()
         {
             this.InitializeComponent();
+
+
+            
         }
 
         void CanvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             sender.ClearColor = Colors.Black;
-            
+
+            Vector2 centerScreen = new Vector2((float)sender.ActualWidth / 2, (float)sender.ActualHeight / 2f);
+            Vector2 centerShadow = new Vector2((float)sender.ActualWidth / 2, ((float)sender.ActualHeight / 2f) + 150);
+
 
             //args.DrawingSession.DrawEllipse(155, 115, 80, 30, Colors.Black, 3);
-            args.DrawingSession.DrawText("Hello, world!", 100, 100, Colors.Yellow);
+            args.DrawingSession.DrawText("Sensorial Rhythm", 100, 100, Colors.Red);
 
-            var circleCenter = new Vector2(300, 300);
-            SpheroCircle sphero = new SpheroCircle(150, Colors.Green);
-            sphero.Draw(circleCenter, args.DrawingSession);
 
-            circleCenter = new Vector2(500, 300);
-            SpheroCircle sphero2 = new SpheroCircle(150, Colors.Blue);
-            sphero2.Draw(circleCenter, args.DrawingSession);
+            var gradientStops = new CanvasGradientStop[]
+            {
+                new CanvasGradientStop { Position = 0, Color = Color.FromArgb(100, 0,255,0) },
+                new CanvasGradientStop { Position = 1, Color = Colors.Transparent }
+            };
 
-            circleCenter = new Vector2(700, 300);
-            SpheroCircle sphero3 = new SpheroCircle(150, Colors.Red);
-            sphero3.Draw(circleCenter, args.DrawingSession);
+            //var middle = new Vector2((float)(sender.Size.Width / 2), (float)(sender.Size.Height / 2));
+
+            var brush = new CanvasRadialGradientBrush(args.DrawingSession,
+            gradientStops,
+            CanvasEdgeBehavior.Mirror,
+            CanvasAlphaMode.Premultiplied
+            )
+            {
+                Center = new Vector2(centerShadow.X, centerShadow.Y),
+                RadiusX = 300,
+                RadiusY = 50,
+            };
+
+            //using (args.DrawingSession.CreateLayer(gradientBrush))
+            {
+                args.DrawingSession.FillEllipse(centerShadow, 300, 50, brush);
+            }
+
+
+            SpheroCircle sphero = new SpheroCircle(150, Color.FromArgb(255,0,192,0));
+            sphero.Draw(centerScreen, args.DrawingSession);
+
+            
+
+            //var circleCenter = new Vector2(300, 300);
+            //SpheroCircle sphero = new SpheroCircle(150, Colors.Green);
+            //sphero.Draw(circleCenter, args.DrawingSession);
+
+            //circleCenter = new Vector2(500, 300);
+            //SpheroCircle sphero2 = new SpheroCircle(150, Colors.Blue);
+            //sphero2.Draw(circleCenter, args.DrawingSession);
+
+            //circleCenter = new Vector2(700, 300);
+            //SpheroCircle sphero3 = new SpheroCircle(150, Colors.Red);
+            //sphero3.Draw(circleCenter, args.DrawingSession);
         }
     }
 }
