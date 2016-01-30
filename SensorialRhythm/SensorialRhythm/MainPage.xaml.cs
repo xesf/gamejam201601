@@ -307,8 +307,8 @@ namespace SensorialRhythm
         {
             float minValue = -650;
             float maxValue = 650;
-            float minShakeValue = -1300;
-            float maxShakeValue = 1300;
+            float minShakeValue = -1200;
+            float maxShakeValue = 1200;
 
             _movType = SpheroMovementType.None;
 
@@ -321,9 +321,9 @@ namespace SensorialRhythm
             else if (_gyroscopeY < minValue)
                 _movType = SpheroMovementType.RollRight;
             else if (_gyroscopeZ > maxValue)
-                _movType = SpheroMovementType.YawlClockwise;
-            else if (_gyroscopeZ < minValue)
                 _movType = SpheroMovementType.YawlCounterClockwise;
+            else if (_gyroscopeZ < minValue)
+                _movType = SpheroMovementType.YawlClockwise;
 
             if (_gyroscopeX > maxShakeValue || _gyroscopeX < minShakeValue ||
                 _gyroscopeY > maxShakeValue || _gyroscopeY < minShakeValue ||
