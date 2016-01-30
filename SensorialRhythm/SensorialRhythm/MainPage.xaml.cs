@@ -301,6 +301,10 @@ namespace SensorialRhythm
             _robot.CollisionControl.CollisionDetectedEvent += OnCollisionDetected;
 
             _gameState = GameState.Connected;
+            _currentColor = Colors.Red;
+            _robot.SetRGBLED(_currentColor.R,
+                             _currentColor.G,
+                             _currentColor.B);
         }
 
         private void OnCollisionDetected(object sender, CollisionData e)
@@ -359,6 +363,7 @@ namespace SensorialRhythm
                 if (_movType == SpheroMovementType.ShakeIt)
                 {
                     _gameState = GameState.ThreeTwoOneGo;
+                    _currentSequence = _gameSequence[0]; // starting sequence
                 }
             }
 
@@ -411,7 +416,7 @@ namespace SensorialRhythm
 
             var gradientStops = new CanvasGradientStop[]
             {
-                new CanvasGradientStop { Position = 0, Color = randomColors[_colorIdx] },
+                new CanvasGradientStop { Position = 0, Color = _currentColor },
                 new CanvasGradientStop { Position = 1, Color = Colors.Transparent }
             };
 
@@ -432,26 +437,12 @@ namespace SensorialRhythm
             }
 
             // Color.FromArgb(255,0,192,0) // green
-            SpheroCircle sphero = new SpheroCircle(150, randomColors[_colorIdx]);
+            SpheroCircle sphero = new SpheroCircle(150, _currentColor);
             sphero.Draw(centerScreen, args.DrawingSession);
 
-            //var circleCenter = new Vector2(300, 300);
-            //SpheroCircle sphero = new SpheroCircle(150, Colors.Green);
-            //sphero.Draw(circleCenter, args.DrawingSession);
-
-            //circleCenter = new Vector2(500, 300);
-            //SpheroCircle sphero2 = new SpheroCircle(150, Colors.Blue);
-            //sphero2.Draw(circleCenter, args.DrawingSession);
-
-            //circleCenter = new Vector2(700, 300);
-            //SpheroCircle sphero3 = new SpheroCircle(150, Colors.Red);
-            //sphero3.Draw(circleCenter, args.DrawingSession);
-
-
             // Debug
-
             args.DrawingSession.DrawText("Game State: " + _gameState, 10, (float)sender.Size.Height - 115, Colors.Gray, _debugTextFormat);
-            args.DrawingSession.DrawText("Color [" + _colorIdx + "]: " + randomColors[_colorIdx].ToString(), 10, (float)sender.Size.Height - 100, Colors.Gray, _debugTextFormat);
+            args.DrawingSession.DrawText("Color [" + _currentBeatTime + "]: " + _currentColor.ToString(), 10, (float)sender.Size.Height - 100, Colors.Gray, _debugTextFormat);
             args.DrawingSession.DrawText("Gyroscope X: " + _gyroscopeX, 10, (float)sender.Size.Height - 85, Colors.Gray, _debugTextFormat);
             args.DrawingSession.DrawText("Gyroscope Y: " + _gyroscopeY, 10, (float)sender.Size.Height - 70, Colors.Gray, _debugTextFormat);
             args.DrawingSession.DrawText("Gyroscope Z: " + _gyroscopeZ, 10, (float)sender.Size.Height - 55, Colors.Gray, _debugTextFormat);
@@ -479,9 +470,9 @@ namespace SensorialRhythm
         GameSequence[] _gameSequence = {
             new GameSequence(2400, 7, new Color[]{ Colors.Red,
                                                    Colors.Blue,
-                                                   Colors.Green,
+                                                   Color.FromArgb(255, 0, 255, 0), // green
                                                    Colors.White,
-                                                   Colors.Green,
+                                                   Color.FromArgb(255, 0, 255, 0), // green
                                                    Colors.Red,
                                                    Colors.Blue }, 
                                       new SpheroMovementType[]{ SpheroMovementType.PitchForward,
@@ -497,7 +488,8 @@ namespace SensorialRhythm
         int _currentLevel = 0;
         int _currentBeatTime = 0;
         TimeSpan _currentElapsedTime = TimeSpan.Zero;
-        Color _currentColor;
+        GameSequence _currentSequence;
+        Color _currentColor = Colors.DarkGray;
 
         void ProcessLevel(CanvasAnimatedUpdateEventArgs args)
         {
@@ -529,18 +521,18 @@ namespace SensorialRhythm
             //}
             
             _currentElapsedTime += _elapsedTime;
-            var sequence = _gameSequence[_currentLevel];
-            _currentColor = sequence.Colors[_currentBeatTime];
+            //_currentSequence = _gameSequence[_currentLevel];
 
-            if (_currentBeatTime < sequence.Times)
+            if (_currentBeatTime < _currentSequence.Times)
             {
-                if (_currentElapsedTime.TotalMilliseconds > sequence.Tempo * (_currentBeatTime + 1))
+                if (_currentElapsedTime.TotalMilliseconds > _currentSequence.Tempo * (_currentBeatTime + 1))
                 {
+                    _currentColor = _currentSequence.Colors[_currentBeatTime];
                     _currentElapsedTime = TimeSpan.Zero;
 
-                    _robot.SetRGBLED(sequence.Colors[_currentBeatTime].R, 
-                                     sequence.Colors[_currentBeatTime].G, 
-                                     sequence.Colors[_currentBeatTime].B);
+                    _robot.SetRGBLED(_currentColor.R,
+                                     _currentColor.G,
+                                     _currentColor.B);
 
                     _currentBeatTime++;
                 }
