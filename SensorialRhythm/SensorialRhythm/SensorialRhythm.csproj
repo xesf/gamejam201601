@@ -108,6 +108,7 @@
     <Content Include="Assets\Wide310x150Logo.scale-100.png" />
     <Content Include="Resources\MainScreen.PNG" />
     <Content Include="Resources\StillImages.PNG" />
+    <Content Include="Sound\african_tribal.wav" />
     <Content Include="Sound\Amhran_na_bhFiann.wav" />
     <None Include="project.json" />
   </ItemGroup>

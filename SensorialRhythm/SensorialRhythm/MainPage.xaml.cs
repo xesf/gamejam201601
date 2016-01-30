@@ -99,11 +99,23 @@ namespace SensorialRhythm
         };
         SpheroMovementType _movType = SpheroMovementType.None;
 
+        enum GameState
+        {
+            None,
+            Connecting,
+            Connected,
+            ConnectionFailed,
+            Ready,
+            ThreeTwoOneGo,
+            LevelUp,
+            GameOver
+        }
+        GameState _gameState = GameState.None;
 
-
-       
 
         SoundEffect _anthem = new SoundEffect(@"Sound\Amhran_na_bhFiann.wav");
+
+        SoundEffect _tribal = new SoundEffect(@"Sound\african_tribal.wav");
 
 
         // debug
@@ -210,9 +222,9 @@ namespace SensorialRhythm
         
         private void ShutdownRobotConnection()
         {
-            if (_robot != null)
+            if (_robot != null && _robot.ConnectionState == ConnectionState.Connected)
             {
-                _robot.SensorControl.StopAll();
+                //_robot.SensorControl.StopAll();
                 _robot.Sleep();
                 // temporary while I work on Disconnect.
                 _robot.Disconnect();
@@ -221,15 +233,15 @@ namespace SensorialRhythm
 
                 //_robot.SensorControl.AccelerometerUpdatedEvent -= OnAccelerometerUpdated;
                 //_robot.SensorControl.AttitudeUpdatedEvent -= SensorControl_AttitudeUpdatedEvent;
-                _robot.SensorControl.GyrometerUpdatedEvent -= OnGyrometerUpdated;
+                //_robot.SensorControl.GyrometerUpdatedEvent -= OnGyrometerUpdated;
 
                 //m_robot.CollisionControl.StopDetection();
                 //m_robot.CollisionControl.CollisionDetectedEvent -= OnCollisionDetected;
 
-                RobotProvider provider = RobotProvider.GetSharedProvider();
-                provider.DiscoveredRobotEvent -= OnRobotDiscovered;
-                provider.NoRobotsEvent -= OnNoRobotsEvent;
-                provider.ConnectedRobotEvent -= OnRobotConnected;
+                //RobotProvider provider = RobotProvider.GetSharedProvider();
+                //provider.DiscoveredRobotEvent -= OnRobotDiscovered;
+                //provider.NoRobotsEvent -= OnNoRobotsEvent;
+                //provider.ConnectedRobotEvent -= OnRobotConnected;
             }
         }
 
@@ -273,7 +285,7 @@ namespace SensorialRhythm
             //m_robot.SensorControl.StopAll();
 
             // stop rotors
-            _robot.WriteToRobot(new DeviceMessage(2, 0x33, new byte[] { 0, 0, 0, 0 }));
+            //_robot.WriteToRobot(new DeviceMessage(2, 0x33, new byte[] { 0, 0, 0, 0 }));
 
             _robot.SensorControl.Hz = 10;
 
@@ -311,20 +323,16 @@ namespace SensorialRhythm
 
         private void CanvasAnimatedControl_Update(ICanvasAnimatedControl sender, CanvasAnimatedUpdateEventArgs args)
         {
-            //if (_soundPlayer == null)
+            //if (!_anthem.IsPlaying)
             //{
-            //    _soundPlayer = new MediaElement();
-            //    _soundPlayer.AutoPlay = false;
-            //    _soundPlayer.Source = new Uri("Sound/Amhran_na_bhFiann.ogg");
-
-            //    sender.
-
-            //    _soundPlayer.Play();
+            //    _anthem.Play();
             //}
 
-            if (!_anthem.IsPlaying)
+
+
+            if (!_tribal.IsPlaying)
             {
-                _anthem.Play();
+                _tribal.Play();
             }
 
 
