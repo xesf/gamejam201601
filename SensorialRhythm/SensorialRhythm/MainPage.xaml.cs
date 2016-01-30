@@ -22,6 +22,7 @@ using Windows.ApplicationModel;
 using System.Diagnostics;
 using RobotKit.Internal;
 using Windows.UI.Popups;
+using Microsoft.Graphics.Canvas.Text;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -33,986 +34,42 @@ namespace SensorialRhythm
     public sealed partial class MainPage : Page
     {
         Color[] randomColors = {
-            Colors.AliceBlue,
-        //
-        // Summary:
-        //     Gets the color value that represents the AntiqueWhite named color.
-        //
-        // Returns:
-        //     The color value that represents the AntiqueWhite named color.
-        Colors.AntiqueWhite,
-        //
-        // Summary:
-        //     Gets the color value that represents the Aqua named color.
-        //
-        // Returns:
-        //     The color value that represents the Aqua named color.
-        Colors.Aqua,
-        //
-        // Summary:
-        //     Gets the color value that represents the Aquamarine named color.
-        //
-        // Returns:
-        //     The color value that represents the Aquamarine named color.
-        Colors.Aquamarine,
-        //
-        // Summary:
-        //     Gets the color value that represents the Azure named color.
-        //
-        // Returns:
-        //     The color value that represents the Azure named color.
-        Colors.Azure,
-        //
-        // Summary:
-        //     Gets the color value that represents the Beige named color.
-        //
-        // Returns:
-        //     The color value that represents the Beige named color.
-        Colors.Beige,
-        //
-        // Summary:
-        //     Gets the color value that represents the Bisque named color.
-        //
-        // Returns:
-        //     The color value that represents the Bisque named color.
-        Colors.Bisque,
-        //
-        // Summary:
-        //     Gets the system-defined color that has the ARGB value of #FF000000.
-        //
-        // Returns:
-        //     The system-defined color that has the ARGB value of #FF000000.
-        Colors.Black,
-        //
-        // Summary:
-        //     Gets the color value that represents the BlanchedAlmond named color.
-        //
-        // Returns:
-        //     The color value that represents the BlanchedAlmond named color.
-        Colors.BlanchedAlmond,
-        //
-        // Summary:
-        //     Gets the system-defined color that has the ARGB value of #FF0000FF.
-        //
-        // Returns:
-        //     The system-defined color that has the ARGB value of #FF0000FF.
         Colors.Blue,
-        //
-        // Summary:
-        //     Gets the color value that represents the BlueViolet named color.
-        //
-        // Returns:
-        //     The color value that represents the BlueViolet named color.
         Colors.BlueViolet,
-        //
-        // Summary:
-        //     Gets the system-defined color that has the ARGB value of #FFA52A2A.
-        //
-        // Returns:
-        //     The system-defined color that has the ARGB value of #FFA52A2A.
-        Colors.Brown,
-        //
-        // Summary:
-        //     Gets the color value that represents the BurlyWood named color.
-        //
-        // Returns:
-        //     The color value that represents the BurlyWood named color.
-        Colors.BurlyWood,
-        //
-        // Summary:
-        //     Gets the color value that represents the CadetBlue named color.
-        //
-        // Returns:
-        //     The color value that represents the CadetBlue named color.
-        Colors.CadetBlue,
-        //
-        // Summary:
-        //     Gets the color value that represents the Chartreuse named color.
-        //
-        // Returns:
-        //     The color value that represents the Chartreuse named color.
-        Colors.Chartreuse,
-        //
-        // Summary:
-        //     Gets the color value that represents the Chocolate named color.
-        //
-        // Returns:
-        //     The color value that represents the Chocolate named color.
-        Colors.Chocolate,
-        //
-        // Summary:
-        //     Gets the color value that represents the Coral named color.
-        //
-        // Returns:
-        //     The color value that represents the Coral named color.
-        Colors.Coral,
-        //
-        // Summary:
-        //     Gets the color value that represents the CornflowerBlue named color.
-        //
-        // Returns:
-        //     The color value that represents the CornflowerBlue named color.
         Colors.CornflowerBlue,
-        //
-        // Summary:
-        //     Gets the color value that represents the Cornsilk named color.
-        //
-        // Returns:
-        //     The color value that represents the Cornsilk named color.
-        Colors.Cornsilk,
-        //
-        // Summary:
-        //     Gets the color value that represents the Crimson named color.
-        //
-        // Returns:
-        //     The color value that represents the Crimson named color.
-        Colors.Crimson,
-        //
-        // Summary:
-        //     Gets the system-defined color that has the ARGB value of #FF00FFFF.
-        //
-        // Returns:
-        //     The system-defined color that has the ARGB value of ##FF00FFFF.
-        Colors.Cyan,
-        //
-        // Summary:
-        //     Gets the color value that represents the DarkBlue named color.
-        //
-        // Returns:
-        //     The color value that represents the DarkBlue named color.
-        Colors.DarkBlue,
-        //
-        // Summary:
-        //     Gets the color value that represents the DarkCyan named color.
-        //
-        // Returns:
-        //     The color value that represents the DarkCyan named color.
-        Colors.DarkCyan,
-        //
-        // Summary:
-        //     Gets the color value that represents the DarkGoldenrod named color.
-        //
-        // Returns:
-        //     The color value that represents the DarkGoldenrod named color.
-        Colors.DarkGoldenrod,
-        //
-        // Summary:
-        //     Gets the system-defined color that has the ARGB value of #FFA9A9A9.
-        //
-        // Returns:
-        //     The system-defined color that has the ARGB value of #FFA9A9A9.
-        Colors.DarkGray,
-        //
-        // Summary:
-        //     Gets the color value that represents the DarkGreen named color.
-        //
-        // Returns:
-        //     The color value that represents the DarkGreen named color.
+        /*Colors.DarkBlue,
         Colors.DarkGreen,
-        //
-        // Summary:
-        //     Gets the color value that represents the DarkKhaki named color.
-        //
-        // Returns:
-        //     The color value that represents the DarkKhaki named color.
-        Colors.DarkKhaki,
-        //
-        // Summary:
-        //     Gets the color value that represents the DarkMagenta named color.
-        //
-        // Returns:
-        //     The color value that represents the DarkMagenta named color.
         Colors.DarkMagenta,
-        //
-        // Summary:
-        //     Gets the color value that represents the DarkOliveGreen named color.
-        //
-        // Returns:
-        //     The color value that represents the DarkOliveGreen named color.
         Colors.DarkOliveGreen,
-        //
-        // Summary:
-        //     Gets the color value that represents the DarkOrange named color.
-        //
-        // Returns:
-        //     The color value that represents the DarkOrange named color.
         Colors.DarkOrange,
-        //
-        // Summary:
-        //     Gets the color value that represents the DarkOrchid named color.
-        //
-        // Returns:
-        //     The color value that represents the DarkOrchid named color.
-        Colors.DarkOrchid,
-        //
-        // Summary:
-        //     Gets the color value that represents the DarkRed named color.
-        //
-        // Returns:
-        //     The color value that represents the DarkRed named color.
         Colors.DarkRed,
-        //
-        // Summary:
-        //     Gets the color value that represents the DarkSalmon named color.
-        //
-        // Returns:
-        //     The color value that represents the DarkSalmon named color.
-        Colors.DarkSalmon,
-        //
-        // Summary:
-        //     Gets the color value that represents the DarkSeaGreen named color.
-        //
-        // Returns:
-        //     The color value that represents the DarkSeaGreen named color.
-        Colors.DarkSeaGreen,
-        //
-        // Summary:
-        //     Gets the color value that represents the DarkSlateBlue named color.
-        //
-        // Returns:
-        //     The color value that represents the DarkSlateBlue named color.
-        Colors.DarkSlateBlue,
-        //
-        // Summary:
-        //     Gets the color value that represents the DarkSlateGray named color.
-        //
-        // Returns:
-        //     The color value that represents the DarkSlateGray named color.
-        Colors.DarkSlateGray,
-        //
-        // Summary:
-        //     Gets the color value that represents the DarkTurquoise named color.
-        //
-        // Returns:
-        //     The color value that represents the DarkTurquoise named color.
         Colors.DarkTurquoise,
-        //
-        // Summary:
-        //     Gets the color value that represents the DarkViolet named color.
-        //
-        // Returns:
-        //     The color value that represents the DarkViolet named color.
-        Colors.DarkViolet,
-        //
-        // Summary:
-        //     Gets the color value that represents the DeepPink named color.
-        //
-        // Returns:
-        //     The color value that represents the DeepPink named color.
+        Colors.DarkViolet,*/
         Colors.DeepPink,
-        //
-        // Summary:
-        //     Gets the color value that represents the DeepSkyBlue named color.
-        //
-        // Returns:
-        //     The color value that represents the DeepSkyBlue named color.
-        Colors.DeepSkyBlue,
-        //
-        // Summary:
-        //     Gets the color value that represents the DimGray named color.
-        //
-        // Returns:
-        //     The color value that represents the DimGray named color.
-        Colors.DimGray,
-        //
-        // Summary:
-        //     Gets the color value that represents the DodgerBlue named color.
-        //
-        // Returns:
-        //     The color value that represents the DodgerBlue named color.
-        Colors.DodgerBlue,
-        //
-        // Summary:
-        //     Gets the color value that represents the Firebrick named color.
-        //
-        // Returns:
-        //     The color value that represents the Firebrick named color.
         Colors.Firebrick,
-        //
-        // Summary:
-        //     Gets the color value that represents the FloralWhite named color.
-        //
-        // Returns:
-        //     The color value that represents the FloralWhite named color.
-        Colors.FloralWhite,
-        //
-        // Summary:
-        //     Gets the color value that represents the ForestGreen named color.
-        //
-        // Returns:
-        //     The color value that represents the ForestGreen named color.
         Colors.ForestGreen,
-        //
-        // Summary:
-        //     Gets the color value that represents the Fuchsia named color.
-        //
-        // Returns:
-        //     The color value that represents the Fuchsia named color.
         Colors.Fuchsia,
-        //
-        // Summary:
-        //     Gets the color value that represents the Gainsboro named color.
-        //
-        // Returns:
-        //     The color value that represents the Gainsboro named color.
-        Colors.Gainsboro,
-        //
-        // Summary:
-        //     Gets the color value that represents the GhostWhite named color.
-        //
-        // Returns:
-        //     The color value that represents the GhostWhite named color.
-        Colors.GhostWhite,
-        //
-        // Summary:
-        //     Gets the color value that represents the Gold named color.
-        //
-        // Returns:
-        //     The color value that represents the Gold named color.
-        Colors.Gold,
-        //
-        // Summary:
-        //     Gets the color value that represents the Goldenrod named color.
-        //
-        // Returns:
-        //     The color value that represents the Goldenrod named color.
-        Colors.Goldenrod,
-        //
-        // Summary:
-        //     Gets the system-defined color that has the ARGB value of #FF808080.
-        //
-        // Returns:
-        //     The system-defined color that has the ARGB value of #FF808080.
-        Colors.Gray,
-        //
-        // Summary:
-        //     Gets the system-defined color that has the ARGB value of #FF008000.
-        //
-        // Returns:
-        //     The system-defined color that has the ARGB value of #FF008000.
         Colors.Green,
-        //
-        // Summary:
-        //     Gets the color value that represents the GreenYellow named color.
-        //
-        // Returns:
-        //     The color value that represents the GreenYellow named color.
         Colors.GreenYellow,
-        //
-        // Summary:
-        //     Gets the color value that represents the Honeydew named color.
-        //
-        // Returns:
-        //     The color value that represents the Honeydew named color.
-        Colors.Honeydew,
-        //
-        // Summary:
-        //     Gets the color value that represents the HotPink named color.
-        //
-        // Returns:
-        //     The color value that represents the HotPink named color.
         Colors.HotPink,
-        //
-        // Summary:
-        //     Gets the color value that represents the IndianRed named color.
-        //
-        // Returns:
-        //     The color value that represents the IndianRed named color.
         Colors.IndianRed,
-        //
-        // Summary:
-        //     Gets the color value that represents the Indigo named color.
-        //
-        // Returns:
-        //     The color value that represents the Indigo named color.
-        Colors.Indigo,
-        //
-        // Summary:
-        //     Gets the color value that represents the Ivory named color.
-        //
-        // Returns:
-        //     The color value that represents the Ivory named color.
-        Colors.Ivory,
-        //
-        // Summary:
-        //     Gets the color value that represents the Khaki named color.
-        //
-        // Returns:
-        //     The color value that represents the Khaki named color.
-        Colors.Khaki,
-        //
-        // Summary:
-        //     Gets the color value that represents the Lavender named color.
-        //
-        // Returns:
-        //     The color value that represents the Lavender named color.
-        Colors.Lavender,
-        //
-        // Summary:
-        //     Gets the color value that represents the LavenderBlush named color.
-        //
-        // Returns:
-        //     The color value that represents the LavenderBlush named color.
-        Colors.LavenderBlush,
-        //
-        // Summary:
-        //     Gets the color value that represents the LawnGreen named color.
-        //
-        // Returns:
-        //     The color value that represents the LawnGreen named color.
-        Colors.LawnGreen,
-        //
-        // Summary:
-        //     Gets the color value that represents the LemonChiffon named color.
-        //
-        // Returns:
-        //     The color value that represents the LemonChiffon named color.
-        Colors.LemonChiffon,
-        //
-        // Summary:
-        //     Gets the color value that represents the LightBlue named color.
-        //
-        // Returns:
-        //     The color value that represents the LightBlue named color.
-        Colors.LightBlue,
-        //
-        // Summary:
-        //     Gets the color value that represents the LightCoral named color.
-        //
-        // Returns:
-        //     The color value that represents the LightCoral named color.
-        Colors.LightCoral,
-        //
-        // Summary:
-        //     Gets the color value that represents the LightCyan named color.
-        //
-        // Returns:
-        //     The color value that represents the LightCyan named color.
-        Colors.LightCyan,
-        //
-        // Summary:
-        //     Gets the color value that represents the LightGoldenrodYellow named color.
-        //
-        // Returns:
-        //     The color value that represents the LightGoldenrodYellow named color.
-        Colors.LightGoldenrodYellow,
-        //
-        // Summary:
-        //     Gets the system-defined color that has the ARGB value of #FFD3D3D3.
-        //
-        // Returns:
-        //     Gets the system-defined color that has the ARGB value of #FFD3D3D3.
-        Colors.LightGray,
-        //
-        // Summary:
-        //     Gets the color value that represents the LightGreen named color.
-        //
-        // Returns:
-        //     The color value that represents the LightGreen named color.
-        Colors.LightGreen,
-        //
-        // Summary:
-        //     Gets the color value that represents the LightPink named color.
-        //
-        // Returns:
-        //     The color value that represents the LightPink named color.
         Colors.LightPink,
-        //
-        // Summary:
-        //     Gets the color value that represents the LightSalmon named color.
-        //
-        // Returns:
-        //     The color value that represents the LightSalmon named color.
-        Colors.LightSalmon,
-        //
-        // Summary:
-        //     Gets the color value that represents the LightSeaGreen named color.
-        //
-        // Returns:
-        //     The color value that represents the LightSeaGreen named color.
-        Colors.LightSeaGreen,
-        //
-        // Summary:
-        //     Gets the color value that represents the LightSkyBlue named color.
-        //
-        // Returns:
-        //     The color value that represents the LightSkyBlue named color.
-        Colors.LightSkyBlue,
-        //
-        // Summary:
-        //     Gets the color value that represents the LightSlateGray named color.
-        //
-        // Returns:
-        //     The color value that represents the LightSlateGray named color.
-        Colors.LightSlateGray,
-        //
-        // Summary:
-        //     Gets the color value that represents the LightSteelBlue named color.
-        //
-        // Returns:
-        //     The color value that represents the LightSteelBlue named color.
-        Colors.LightSteelBlue,
-        //
-        // Summary:
-        //     Gets the color value that represents the LightYellow named color.
-        //
-        // Returns:
-        //     The color value that represents the LightYellow named color.
-        Colors.LightYellow,
-        //
-        // Summary:
-        //     Gets the color value that represents the Lime named color.
-        //
-        // Returns:
-        //     The color value that represents the Lime named color.
         Colors.Lime,
-        //
-        // Summary:
-        //     Gets the color value that represents the LimeGreen named color.
-        //
-        // Returns:
-        //     The color value that represents the LimeGreen named color.
         Colors.LimeGreen,
-        //
-        // Summary:
-        //     Gets the color value that represents the Linen named color.
-        //
-        // Returns:
-        //     The color value that represents the Linen named color.
-        Colors.Linen,
-        //
-        // Summary:
-        //     Gets the system-defined color that has the ARGB value of #FFFF00FF..
-        //
-        // Returns:
-        //     The system-defined color that has the ARGB value of #FFFF00FF..
         Colors.Magenta,
-        //
-        // Summary:
-        //     Gets the color value that represents the Maroon named color.
-        //
-        // Returns:
-        //     The color value that represents the Maroon named color.
         Colors.Maroon,
-        //
-        // Summary:
-        //     Gets the color value that represents the MediumAquamarine named color.
-        //
-        // Returns:
-        //     The color value that represents the MediumAquamarine named color.
-        Colors.MediumAquamarine,
-        //
-        // Summary:
-        //     Gets the color value that represents the MediumBlue named color.
-        //
-        // Returns:
-        //     The color value that represents the MediumBlue named color.
         Colors.MediumBlue,
-        //
-        // Summary:
-        //     Gets the color value that represents the MediumOrchid named color.
-        //
-        // Returns:
-        //     The color value that represents the MediumOrchid named color.
-        Colors.MediumOrchid,
-        //
-        // Summary:
-        //     Gets the color value that represents the MediumPurple named color.
-        //
-        // Returns:
-        //     The color value that represents the MediumPurple named color.
         Colors.MediumPurple,
-        //
-        // Summary:
-        //     Gets the color value that represents the MediumSeaGreen named color.
-        //
-        // Returns:
-        //     The color value that represents the MediumSeaGreen named color.
-        Colors.MediumSeaGreen,
-        //
-        // Summary:
-        //     Gets the color value that represents the MediumSlateBlue named color.
-        //
-        // Returns:
-        //     The color value that represents the MediumSlateBlue named color.
-        Colors.MediumSlateBlue,
-        //
-        // Summary:
-        //     Gets the color value that represents the MediumSpringGreen named color.
-        //
-        // Returns:
-        //     The color value that represents the MediumSpringGreen named color.
-        Colors.MediumSpringGreen,
-        //
-        // Summary:
-        //     Gets the color value that represents the MediumTurquoise named color.
-        //
-        // Returns:
-        //     The color value that represents the MediumTurquoise named color.
         Colors.MediumTurquoise,
-        //
-        // Summary:
-        //     Gets the color value that represents the MediumVioletRed named color.
-        //
-        // Returns:
-        //     The color value that represents the MediumVioletRed named color.
         Colors.MediumVioletRed,
-        //
-        // Summary:
-        //     Gets the color value that represents the MidnightBlue named color.
-        //
-        // Returns:
-        //     The color value that represents the MidnightBlue named color.
-        Colors.MidnightBlue,
-        //
-        // Summary:
-        //     Gets the color value that represents the MintCream named color.
-        //
-        // Returns:
-        //     The color value that represents the MintCream named color.
-        Colors.MintCream,
-        //
-        // Summary:
-        //     Gets the color value that represents the MistyRose named color.
-        //
-        // Returns:
-        //     The color value that represents the MistyRose named color.
-        Colors.MistyRose,
-        //
-        // Summary:
-        //     Gets the color value that represents the Moccasin named color.
-        //
-        // Returns:
-        //     The color value that represents the Moccasin named color.
-        Colors.Moccasin,
-        //
-        // Summary:
-        //     Gets the color value that represents the NavajoWhite named color.
-        //
-        // Returns:
-        //     The color value that represents the NavajoWhite named color.
-        Colors.NavajoWhite,
-        //
-        // Summary:
-        //     Gets the color value that represents the Navy named color.
-        //
-        // Returns:
-        //     The color value that represents the Navy named color.
-        Colors.Navy,
-        //
-        // Summary:
-        //     Gets the color value that represents the OldLace named color.
-        //
-        // Returns:
-        //     The color value that represents the OldLace named color.
-        Colors.OldLace,
-        //
-        // Summary:
-        //     Gets the color value that represents the Olive named color.
-        //
-        // Returns:
-        //     The color value that represents the Olive named color.
-        Colors.Olive,
-        //
-        // Summary:
-        //     Gets the color value that represents the OliveDrab named color.
-        //
-        // Returns:
-        //     The color value that represents the OliveDrab named color.
-        Colors.OliveDrab,
-        //
-        // Summary:
-        //     Gets the system-defined color that has the ARGB value of #FFFFA500..
-        //
-        // Returns:
-        //     The system-defined color that has the ARGB value of #FFFFA500..
-        Colors.Orange,
-        //
-        // Summary:
-        //     Gets the color value that represents the OrangeRed named color.
-        //
-        // Returns:
-        //     The color value that represents the OrangeRed named color.
-        Colors.OrangeRed,
-        //
-        // Summary:
-        //     Gets the color value that represents the Orchid named color.
-        //
-        // Returns:
-        //     The color value that represents the Orchid named color.
-        Colors.Orchid,
-        //
-        // Summary:
-        //     Gets the color value that represents the PaleGoldenrod named color.
-        //
-        // Returns:
-        //     The color value that represents the PaleGoldenrod named color.
-        Colors.PaleGoldenrod,
-        //
-        // Summary:
-        //     Gets the color value that represents the PaleGreen named color.
-        //
-        // Returns:
-        //     The color value that represents the PaleGreen named color.
-        Colors.PaleGreen,
-        //
-        // Summary:
-        //     Gets the color value that represents the PaleTurquoise named color.
-        //
-        // Returns:
-        //     The color value that represents the PaleTurquoise named color.
-        Colors.PaleTurquoise,
-        //
-        // Summary:
-        //     Gets the color value that represents the PaleVioletRed named color.
-        //
-        // Returns:
-        //     The color value that represents the PaleVioletRed named color.
-        Colors.PaleVioletRed,
-        //
-        // Summary:
-        //     Gets the color value that represents the PapayaWhip named color.
-        //
-        // Returns:
-        //     The color value that represents the PapayaWhip named color.
-        Colors.PapayaWhip,
-        //
-        // Summary:
-        //     Gets the color value that represents the PeachPuff named color.
-        //
-        // Returns:
-        //     The color value that represents the PeachPuff named color.
-        Colors.PeachPuff,
-        //
-        // Summary:
-        //     Gets the color value that represents the Peru named color.
-        //
-        // Returns:
-        //     The color value that represents the Peru named color.
-        Colors.Peru,
-        //
-        // Summary:
-        //     Gets the color value that represents the Pink named color.
-        //
-        // Returns:
-        //     The color value that represents the Pink named color.
+        //Colors.Orange,
+        //Colors.OrangeRed,
         Colors.Pink,
-        //
-        // Summary:
-        //     Gets the color value that represents the Plum named color.
-        //
-        // Returns:
-        //     The color value that represents the Plum named color.
-        Colors.Plum,
-        //
-        // Summary:
-        //     Gets the color value that represents the PowderBlue named color.
-        //
-        // Returns:
-        //     The color value that represents the PowderBlue named color.
-        Colors.PowderBlue,
-        //
-        // Summary:
-        //     Gets the system-defined color that has the ARGB value of #FF800080..
-        //
-        // Returns:
-        //     The system-defined color that has the ARGB value of #FF800080..
         Colors.Purple,
-        //
-        // Summary:
-        //     Gets the system-defined color that has the ARGB value of #FFFF0000.
-        //
-        // Returns:
-        //     The system-defined color that has the ARGB value of #FFFF0000.
         Colors.Red,
-        //
-        // Summary:
-        //     Gets the color value that represents the RosyBrown named color.
-        //
-        // Returns:
-        //     The color value that represents the RosyBrown named color.
-        Colors.RosyBrown,
-        //
-        // Summary:
-        //     Gets the color value that represents the RoyalBlue named color.
-        //
-        // Returns:
-        //     The color value that represents the RoyalBlue named color.
-        Colors.RoyalBlue,
-        //
-        // Summary:
-        //     Gets the color value that represents the SaddleBrown named color.
-        //
-        // Returns:
-        //     The color value that represents the SaddleBrown named color.
-        Colors.SaddleBrown,
-        //
-        // Summary:
-        //     Gets the color value that represents the Salmon named color.
-        //
-        // Returns:
-        //     The color value that represents the Salmon named color.
-        Colors.Salmon,
-        //
-        // Summary:
-        //     Gets the color value that represents the SandyBrown named color.
-        //
-        // Returns:
-        //     The color value that represents the SandyBrown named color.
-        Colors.SandyBrown,
-        //
-        // Summary:
-        //     Gets the color value that represents the SeaGreen named color.
-        //
-        // Returns:
-        //     The color value that represents the SeaGreen named color.
-        Colors.SeaGreen,
-        //
-        // Summary:
-        //     Gets the color value that represents the SeaShell named color.
-        //
-        // Returns:
-        //     The color value that represents the SeaShell named color.
-        Colors.SeaShell,
-        //
-        // Summary:
-        //     Gets the color value that represents the Sienna named color.
-        //
-        // Returns:
-        //     The color value that represents the Sienna named color.
-        Colors.Sienna,
-        //
-        // Summary:
-        //     Gets the color value that represents the Silver named color.
-        //
-        // Returns:
-        //     The color value that represents the Silver named color.
-        Colors.Silver,
-        //
-        // Summary:
-        //     Gets the color value that represents the SkyBlue named color.
-        //
-        // Returns:
-        //     The color value that represents the SkyBlue named color.
-        Colors.SkyBlue,
-        //
-        // Summary:
-        //     Gets the color value that represents the SlateBlue named color.
-        //
-        // Returns:
-        //     The color value that represents the SlateBlue named color.
-        Colors.SlateBlue,
-        //
-        // Summary:
-        //     Gets the color value that represents the SlateGray named color.
-        //
-        // Returns:
-        //     The color value that represents the SlateGray named color.
-        Colors.SlateGray,
-        //
-        // Summary:
-        //     Gets the color value that represents the Snow named color.
-        //
-        // Returns:
-        //     The color value that represents the Snow named color.
-        Colors.Snow,
-        //
-        // Summary:
-        //     Gets the color value that represents the SpringGreen named color.
-        //
-        // Returns:
-        //     The color value that represents the SpringGreen named color.
-        Colors.SpringGreen,
-        //
-        // Summary:
-        //     Gets the color value that represents the SteelBlue named color.
-        //
-        // Returns:
-        //     The color value that represents the SteelBlue named color.
-        Colors.SteelBlue,
-        //
-        // Summary:
-        //     Gets the color value that represents the Tan named color.
-        //
-        // Returns:
-        //     The color value that represents the Tan named color.
-        Colors.Tan,
-        //
-        // Summary:
-        //     Gets the color value that represents the Teal named color.
-        //
-        // Returns:
-        //     The color value that represents the Teal named color.
-        Colors.Teal,
-        //
-        // Summary:
-        //     Gets the color value that represents the Thistle named color.
-        //
-        // Returns:
-        //     The color value that represents the Thistle named color.
-        Colors.Thistle,
-        //
-        // Summary:
-        //     Gets the color value that represents the Tomato named color.
-        //
-        // Returns:
-        //     The color value that represents the Tomato named color.
-        Colors.Tomato,
-        //
-        // Summary:
-        //     Gets the system-defined color that has the ARGB value of #00FFFFFF.
-        //
-        // Returns:
-        //     The system-defined color that has the ARGB value of #00FFFFFF.
-        Colors.Transparent,
-        //
-        // Summary:
-        //     Gets the color value that represents the Turquoise named color.
-        //
-        // Returns:
-        //     The color value that represents the Turquoise named color.
         Colors.Turquoise,
-        //
-        // Summary:
-        //     Gets the color value that represents the Violet named color.
-        //
-        // Returns:
-        //     The color value that represents the Violet named color.
         Colors.Violet,
-        //
-        // Summary:
-        //     Gets the color value that represents the Wheat named color.
-        //
-        // Returns:
-        //     The color value that represents the Wheat named color.
-        Colors.Wheat,
-        //
-        // Summary:
-        //     Gets the system-defined color that has the ARGB value of #FFFFFFFF.
-        //
-        // Returns:
-        //     The system-defined color that has the ARGB value of #FFFFFFFF.
         Colors.White,
-        //
-        // Summary:
-        //     Gets the color value that represents the WhiteSmoke named color.
-        //
-        // Returns:
-        //     The color value that represents the WhiteSmoke named color.
-        Colors.WhiteSmoke,
-        //
-        // Summary:
-        //     Gets the system-defined color that has the ARGB value of #FFFFFF00.
-        //
-        // Returns:
-        //     The system-defined color that has the ARGB value of #FFFFFF00.
-        Colors.Yellow,
-        //
-        // Summary:
-        //     Gets the color value that represents the YellowGreen named color.
-        //
-        // Returns:
-        //     The color value that represents the YellowGreen named color.
         Colors.YellowGreen
         };
 
@@ -1023,6 +80,24 @@ namespace SensorialRhythm
         TimeSpan _colorTime;
 
         Sphero _robot = null;
+        float _gyroscopeX = 0;
+        float _gyroscopeY = 0;
+        float _gyroscopeZ = 0;
+
+        enum SpheroMovementType {
+            None,
+            PitchForward,
+            PitchBackwards,
+            RollLeft,
+            RollRight,
+            YawlClockwise,
+            YawlCounterClockwise,
+            ShakeIt
+        };
+        SpheroMovementType _movType = SpheroMovementType.None;
+
+        // debug
+        CanvasTextFormat _debugTextFormat = new CanvasTextFormat();
 
         public class SpheroColor {
             public Color _main;
@@ -1066,6 +141,9 @@ namespace SensorialRhythm
         public MainPage()
         {
             this.InitializeComponent();
+
+            // INIT
+            _debugTextFormat.FontSize = 12;
         }
     
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -1189,22 +267,6 @@ namespace SensorialRhythm
             //AtittudeYaw.Text = "" + reading.Yaw;
         }
 
-        //private void ConnectionToggle_Toggled(object sender, RoutedEventArgs e)
-        //{
-        //    Debug.WriteLine("Connection Toggled : " + ConnectionToggle.IsOn);
-        //    //ConnectionToggle.OnContent = "Connecting...";
-        //    if (ConnectionToggle.IsOn)
-        //    {
-        //        if (m_robot == null)
-        //        {
-        //            SetupRobotConnection();
-        //        }
-        //    }
-        //    else {
-        //        ShutdownRobotConnection();
-        //    }
-        //}
-
         private void OnAccelerometerUpdated(object sender, AccelerometerReading reading)
         {
             //AccelerometerX.Text = "" + reading.X;
@@ -1214,11 +276,10 @@ namespace SensorialRhythm
 
         private void OnGyrometerUpdated(object sender, GyrometerReading reading)
         {
-            //GyroscopeX.Text = "" + reading.X;
-            //GyroscopeY.Text = "" + reading.Y;
-            //GyroscopeZ.Text = "" + reading.Z;
+            _gyroscopeX = reading.X;
+            _gyroscopeY = reading.Y;
+            _gyroscopeZ = reading.Z;
         }
-
 
         private void CanvasAnimatedControl_Update(ICanvasAnimatedControl sender, CanvasAnimatedUpdateEventArgs args)
         {
@@ -1283,7 +344,7 @@ namespace SensorialRhythm
             SpheroCircle sphero = new SpheroCircle(150, randomColors[_colorIdx]);
             sphero.Draw(centerScreen, args.DrawingSession);
 
-            
+
 
             //var circleCenter = new Vector2(300, 300);
             //SpheroCircle sphero = new SpheroCircle(150, Colors.Green);
@@ -1296,6 +357,15 @@ namespace SensorialRhythm
             //circleCenter = new Vector2(700, 300);
             //SpheroCircle sphero3 = new SpheroCircle(150, Colors.Red);
             //sphero3.Draw(circleCenter, args.DrawingSession);
+
+
+            // Debug
+
+            args.DrawingSession.DrawText("Color [" + _colorIdx + "] " + randomColors[_colorIdx].ToString(), 10, (float)sender.Size.Height - 100, Colors.Gray, _debugTextFormat);
+            args.DrawingSession.DrawText("Gyroscope X :" + _gyroscopeX, 10, (float)sender.Size.Height - 85, Colors.Gray, _debugTextFormat);
+            args.DrawingSession.DrawText("Gyroscope Y :" + _gyroscopeY, 10, (float)sender.Size.Height - 70, Colors.Gray, _debugTextFormat);
+            args.DrawingSession.DrawText("Gyroscope Z :" + _gyroscopeZ, 10, (float)sender.Size.Height - 55, Colors.Gray, _debugTextFormat);
+            args.DrawingSession.DrawText("Movement Type :" + _movType, 10, (float)sender.Size.Height - 55, Colors.Gray, _debugTextFormat);
         }
 
     }
