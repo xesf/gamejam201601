@@ -17,6 +17,11 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Microsoft.Graphics.Canvas.Brushes;
 using Microsoft.Graphics.Canvas;
+using RobotKit;
+using Windows.ApplicationModel;
+using System.Diagnostics;
+using RobotKit.Internal;
+using Windows.UI.Popups;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -1017,6 +1022,8 @@ namespace SensorialRhythm
         TimeSpan _elapsedTime;
         TimeSpan _colorTime;
 
+        Sphero m_robot = null;
+
         public class SpheroColor {
             public Color _main;
             public Color _inner;
@@ -1059,6 +1066,157 @@ namespace SensorialRhythm
         public MainPage()
         {
             this.InitializeComponent();
+        }
+    
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            SetupRobotConnection();
+            Application app = Application.Current;
+            app.Suspending += OnSuspending;
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
+
+            ShutdownRobotConnection();
+            //ShutdownControls();
+
+            Application app = Application.Current;
+            app.Suspending -= OnSuspending;
+        }
+
+
+        private void OnSuspending(object sender, SuspendingEventArgs args)
+        {
+            ShutdownRobotConnection();
+        }
+
+        private void SetupRobotConnection()
+        {
+            //SpheroName.Text = kNoSpheroConnected;
+
+            RobotProvider provider = RobotProvider.GetSharedProvider();
+            provider.DiscoveredRobotEvent += OnRobotDiscovered;
+            provider.NoRobotsEvent += OnNoRobotsEvent;
+            provider.ConnectedRobotEvent += OnRobotConnected;
+            provider.FindRobots();
+        }
+        
+        private void ShutdownRobotConnection()
+        {
+            if (m_robot != null)
+            {
+                m_robot.SensorControl.StopAll();
+                m_robot.Sleep();
+                // temporary while I work on Disconnect.
+                //m_robot.Disconnect();
+                //ConnectionToggle.OffContent = "Disconnected";
+                //SpheroName.Text = kNoSpheroConnected;
+
+                m_robot.SensorControl.AccelerometerUpdatedEvent -= OnAccelerometerUpdated;
+                m_robot.SensorControl.AttitudeUpdatedEvent -= SensorControl_AttitudeUpdatedEvent;
+                m_robot.SensorControl.GyrometerUpdatedEvent -= OnGyrometerUpdated;
+
+                //m_robot.CollisionControl.StopDetection();
+                //m_robot.CollisionControl.CollisionDetectedEvent -= OnCollisionDetected;
+
+                RobotProvider provider = RobotProvider.GetSharedProvider();
+                provider.DiscoveredRobotEvent -= OnRobotDiscovered;
+                provider.NoRobotsEvent -= OnNoRobotsEvent;
+                provider.ConnectedRobotEvent -= OnRobotConnected;
+            }
+        }
+
+        private void OnRobotDiscovered(object sender, Robot robot)
+        {
+            Debug.WriteLine(string.Format("Discovered \"{0}\"", robot.BluetoothName));
+
+            if (m_robot == null)
+            {
+                RobotProvider provider = RobotProvider.GetSharedProvider();
+                provider.ConnectRobot(robot);
+                //ConnectionToggle.OnContent = "Connecting...";
+                m_robot = (Sphero)robot;
+                //SpheroName.Text = string.Format(kConnectingToSphero, robot.BluetoothName);
+            }
+        }
+
+
+        private void OnNoRobotsEvent(object sender, EventArgs e)
+        {
+            MessageDialog dialog = new MessageDialog("No Sphero Paired");
+            dialog.DefaultCommandIndex = 0;
+            dialog.CancelCommandIndex = 1;
+            dialog.ShowAsync();
+        }
+
+        
+        private void OnRobotConnected(object sender, Robot robot)
+        {
+            Debug.WriteLine(string.Format("Connected to {0}", robot));
+            //ConnectionToggle.IsOn = true;
+            //ConnectionToggle.OnContent = "Connected";
+
+            m_robot.SetBackLED(127);
+            //m_robot.SetRGBLED(255, 255, 255);
+            //SpheroName.Text = string.Format(kSpheroConnected, robot.BluetoothName);
+            //SetupControls();
+
+            //m_robot.SetHeading(0);
+
+            //m_robot.SensorControl.StopAll();
+
+            // stop rotors
+            m_robot.WriteToRobot(new DeviceMessage(2, 0x33, new byte[] { 0, 0, 0, 0 }));
+
+            m_robot.SensorControl.Hz = 10;
+
+            m_robot.SensorControl.AccelerometerUpdatedEvent += OnAccelerometerUpdated;
+            m_robot.SensorControl.AttitudeUpdatedEvent += SensorControl_AttitudeUpdatedEvent;
+            m_robot.SensorControl.GyrometerUpdatedEvent += OnGyrometerUpdated;
+
+            //m_robot.CollisionControl.StartDetectionForWallCollisions();
+            //m_robot.CollisionControl.CollisionDetectedEvent += OnCollisionDetected;
+        }
+
+        private void SensorControl_AttitudeUpdatedEvent(object sender, AttitudeReading reading)
+        {
+            //AtittudeRoll.Text = "" + reading.Roll;
+            //AtittudePitch.Text = "" + reading.Pitch;
+            //AtittudeYaw.Text = "" + reading.Yaw;
+        }
+
+        //private void ConnectionToggle_Toggled(object sender, RoutedEventArgs e)
+        //{
+        //    Debug.WriteLine("Connection Toggled : " + ConnectionToggle.IsOn);
+        //    //ConnectionToggle.OnContent = "Connecting...";
+        //    if (ConnectionToggle.IsOn)
+        //    {
+        //        if (m_robot == null)
+        //        {
+        //            SetupRobotConnection();
+        //        }
+        //    }
+        //    else {
+        //        ShutdownRobotConnection();
+        //    }
+        //}
+
+        private void OnAccelerometerUpdated(object sender, AccelerometerReading reading)
+        {
+            //AccelerometerX.Text = "" + reading.X;
+            //AccelerometerY.Text = "" + reading.Y;
+            //AccelerometerZ.Text = "" + reading.Z;
+        }
+
+        private void OnGyrometerUpdated(object sender, GyrometerReading reading)
+        {
+            //GyroscopeX.Text = "" + reading.X;
+            //GyroscopeY.Text = "" + reading.Y;
+            //GyroscopeZ.Text = "" + reading.Z;
         }
 
 
