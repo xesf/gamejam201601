@@ -87,7 +87,7 @@ namespace SensorialRhythm
         float _gyroscopeY = 0;
         float _gyroscopeZ = 0;
 
-        enum SpheroMovementType {
+        public enum SpheroMovementType {
             None,
             PitchForward,
             PitchBackwards,
@@ -100,14 +100,14 @@ namespace SensorialRhythm
         };
         SpheroMovementType _movType = SpheroMovementType.None;
 
-        enum SpheroTapType
+        public enum SpheroTapType
         {
             None,
             DoubleTap
         };
         SpheroTapType _tapType = SpheroTapType.None;
 
-        enum GameState
+        public enum GameState
         {
             None,
             Connecting,
@@ -463,22 +463,41 @@ namespace SensorialRhythm
         public struct GameSequence {
             public int Tempo;
             public int Times;
+            public Color[] Colors;
+            public SpheroMovementType[] Movements;
 
-            public GameSequence(int tempo, int times)
+            public GameSequence(int tempo, int times, Color[] colors, SpheroMovementType[] movements)
             {
                 Tempo = tempo;
                 Times = times;
+                Colors = colors;
+                Movements = movements;
             }
         }
 
         // Sequence numbers correspond to Level UPs
         GameSequence[] _gameSequence = {
-            new GameSequence(2400, 7)
+            new GameSequence(2400, 7, new Color[]{ Colors.Red,
+                                                   Colors.Blue,
+                                                   Colors.Green,
+                                                   Colors.White,
+                                                   Colors.Green,
+                                                   Colors.Red,
+                                                   Colors.Blue }, 
+                                      new SpheroMovementType[]{ SpheroMovementType.PitchForward,
+                                                                SpheroMovementType.PitchBackwards,
+                                                                SpheroMovementType.RollLeft,
+                                                                SpheroMovementType.RollRight,
+                                                                SpheroMovementType.PitchBackwards,
+                                                                SpheroMovementType.RollLeft,
+                                                                SpheroMovementType.PitchForward }
+            )
         };
 
         int _currentLevel = 0;
         int _currentBeatTime = 0;
-        TimeSpan _currentElapsedTime = TimeSpan.Zero; 
+        TimeSpan _currentElapsedTime = TimeSpan.Zero;
+        Color _currentColor;
 
         void ProcessLevel(CanvasAnimatedUpdateEventArgs args)
         {
@@ -510,19 +529,20 @@ namespace SensorialRhythm
             //}
             
             _currentElapsedTime += _elapsedTime;
-            if (_currentBeatTime < _gameSequence[_currentLevel].Times)
+            var sequence = _gameSequence[_currentLevel];
+            _currentColor = sequence.Colors[_currentBeatTime];
+
+            if (_currentBeatTime < sequence.Times)
             {
-                if (_currentElapsedTime.TotalMilliseconds > _gameSequence[_currentLevel].Tempo * (_currentBeatTime + 1))
+                if (_currentElapsedTime.TotalMilliseconds > sequence.Tempo * (_currentBeatTime + 1))
                 {
                     _currentElapsedTime = TimeSpan.Zero;
 
-                    _colorIdx++;
-                    if (_colorIdx >= randomColors.Length - 1)
-                        _colorIdx = 0;
+                    _robot.SetRGBLED(sequence.Colors[_currentBeatTime].R, 
+                                     sequence.Colors[_currentBeatTime].G, 
+                                     sequence.Colors[_currentBeatTime].B);
 
-                    _robot.SetRGBLED(randomColors[_colorIdx].R, randomColors[_colorIdx].G, randomColors[_colorIdx].B);
-
-                    //_currentBeatTime++;
+                    _currentBeatTime++;
                 }
             }
         }
