@@ -190,12 +190,12 @@ namespace SensorialRhythm
                 _robot.SensorControl.StopAll();
                 _robot.Sleep();
                 // temporary while I work on Disconnect.
-                //m_robot.Disconnect();
+                _robot.Disconnect();
                 //ConnectionToggle.OffContent = "Disconnected";
                 //SpheroName.Text = kNoSpheroConnected;
 
-                _robot.SensorControl.AccelerometerUpdatedEvent -= OnAccelerometerUpdated;
-                _robot.SensorControl.AttitudeUpdatedEvent -= SensorControl_AttitudeUpdatedEvent;
+                //_robot.SensorControl.AccelerometerUpdatedEvent -= OnAccelerometerUpdated;
+                //_robot.SensorControl.AttitudeUpdatedEvent -= SensorControl_AttitudeUpdatedEvent;
                 _robot.SensorControl.GyrometerUpdatedEvent -= OnGyrometerUpdated;
 
                 //m_robot.CollisionControl.StopDetection();
@@ -299,18 +299,47 @@ namespace SensorialRhythm
 
                 _robot.SetRGBLED(randomColors[_colorIdx].R, randomColors[_colorIdx].G, randomColors[_colorIdx].B);
             }
+
+            ProcessMovementType();
+        }
+
+        private void ProcessMovementType()
+        {
+            float minValue = -650;
+            float maxValue = 650;
+            float minShakeValue = -1300;
+            float maxShakeValue = 1300;
+
+            _movType = SpheroMovementType.None;
+
+            if (_gyroscopeX > maxValue)
+                _movType = SpheroMovementType.PitchForward;
+            else if (_gyroscopeX < minValue)
+                _movType = SpheroMovementType.PitchBackwards;
+            else if (_gyroscopeY > maxValue)
+                _movType = SpheroMovementType.RollLeft;
+            else if (_gyroscopeY < minValue)
+                _movType = SpheroMovementType.RollRight;
+            else if (_gyroscopeZ > maxValue)
+                _movType = SpheroMovementType.YawlClockwise;
+            else if (_gyroscopeZ < minValue)
+                _movType = SpheroMovementType.YawlCounterClockwise;
+
+            if (_gyroscopeX > maxShakeValue || _gyroscopeX < minShakeValue ||
+                _gyroscopeY > maxShakeValue || _gyroscopeY < minShakeValue ||
+                _gyroscopeZ > maxShakeValue || _gyroscopeZ < minShakeValue)
+            {
+                _movType = SpheroMovementType.ShakeIt;
+            }
         }
 
         private void CanvasAnimatedControl_Draw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
         {
             sender.ClearColor = Colors.Black;
             
-
             Vector2 centerScreen = new Vector2((float)sender.Size.Width / 2, ((float)sender.Size.Height / 2f) + 20);
             Vector2 centerShadow = new Vector2((float)sender.Size.Width / 2, ((float)sender.Size.Height / 2f) + 180);
-
-
-            //args.DrawingSession.DrawEllipse(155, 115, 80, 30, Colors.Black, 3);
+            
             args.DrawingSession.DrawText("Sensorial Rhythm", 100, 100, Colors.Red);
 
 
@@ -319,8 +348,6 @@ namespace SensorialRhythm
                 new CanvasGradientStop { Position = 0, Color = randomColors[_colorIdx] },
                 new CanvasGradientStop { Position = 1, Color = Colors.Transparent }
             };
-
-            //var middle = new Vector2((float)(sender.Size.Width / 2), (float)(sender.Size.Height / 2));
 
             var brush = new CanvasRadialGradientBrush(args.DrawingSession,
             gradientStops,
@@ -336,15 +363,11 @@ namespace SensorialRhythm
             //using (args.DrawingSession.CreateLayer(gradientBrush))
             {
                 args.DrawingSession.FillEllipse(centerShadow, 300, 50, brush);
-            }
-
-            
+            }          
             
             // Color.FromArgb(255,0,192,0) // green
             SpheroCircle sphero = new SpheroCircle(150, randomColors[_colorIdx]);
             sphero.Draw(centerScreen, args.DrawingSession);
-
-
 
             //var circleCenter = new Vector2(300, 300);
             //SpheroCircle sphero = new SpheroCircle(150, Colors.Green);
@@ -360,12 +383,11 @@ namespace SensorialRhythm
 
 
             // Debug
-
             args.DrawingSession.DrawText("Color [" + _colorIdx + "] " + randomColors[_colorIdx].ToString(), 10, (float)sender.Size.Height - 100, Colors.Gray, _debugTextFormat);
             args.DrawingSession.DrawText("Gyroscope X :" + _gyroscopeX, 10, (float)sender.Size.Height - 85, Colors.Gray, _debugTextFormat);
             args.DrawingSession.DrawText("Gyroscope Y :" + _gyroscopeY, 10, (float)sender.Size.Height - 70, Colors.Gray, _debugTextFormat);
             args.DrawingSession.DrawText("Gyroscope Z :" + _gyroscopeZ, 10, (float)sender.Size.Height - 55, Colors.Gray, _debugTextFormat);
-            args.DrawingSession.DrawText("Movement Type :" + _movType, 10, (float)sender.Size.Height - 55, Colors.Gray, _debugTextFormat);
+            args.DrawingSession.DrawText("Movement Type :" + _movType, 10, (float)sender.Size.Height - 40, Colors.Gray, _debugTextFormat);
         }
 
     }
