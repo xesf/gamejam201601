@@ -1022,7 +1022,7 @@ namespace SensorialRhythm
         TimeSpan _elapsedTime;
         TimeSpan _colorTime;
 
-        Sphero m_robot = null;
+        Sphero _robot = null;
 
         public class SpheroColor {
             public Color _main;
@@ -1107,18 +1107,18 @@ namespace SensorialRhythm
         
         private void ShutdownRobotConnection()
         {
-            if (m_robot != null)
+            if (_robot != null)
             {
-                m_robot.SensorControl.StopAll();
-                m_robot.Sleep();
+                _robot.SensorControl.StopAll();
+                _robot.Sleep();
                 // temporary while I work on Disconnect.
                 //m_robot.Disconnect();
                 //ConnectionToggle.OffContent = "Disconnected";
                 //SpheroName.Text = kNoSpheroConnected;
 
-                m_robot.SensorControl.AccelerometerUpdatedEvent -= OnAccelerometerUpdated;
-                m_robot.SensorControl.AttitudeUpdatedEvent -= SensorControl_AttitudeUpdatedEvent;
-                m_robot.SensorControl.GyrometerUpdatedEvent -= OnGyrometerUpdated;
+                _robot.SensorControl.AccelerometerUpdatedEvent -= OnAccelerometerUpdated;
+                _robot.SensorControl.AttitudeUpdatedEvent -= SensorControl_AttitudeUpdatedEvent;
+                _robot.SensorControl.GyrometerUpdatedEvent -= OnGyrometerUpdated;
 
                 //m_robot.CollisionControl.StopDetection();
                 //m_robot.CollisionControl.CollisionDetectedEvent -= OnCollisionDetected;
@@ -1134,12 +1134,12 @@ namespace SensorialRhythm
         {
             Debug.WriteLine(string.Format("Discovered \"{0}\"", robot.BluetoothName));
 
-            if (m_robot == null)
+            if (_robot == null)
             {
                 RobotProvider provider = RobotProvider.GetSharedProvider();
                 provider.ConnectRobot(robot);
                 //ConnectionToggle.OnContent = "Connecting...";
-                m_robot = (Sphero)robot;
+                _robot = (Sphero)robot;
                 //SpheroName.Text = string.Format(kConnectingToSphero, robot.BluetoothName);
             }
         }
@@ -1160,7 +1160,7 @@ namespace SensorialRhythm
             //ConnectionToggle.IsOn = true;
             //ConnectionToggle.OnContent = "Connected";
 
-            m_robot.SetBackLED(127);
+            _robot.SetBackLED(127);
             //m_robot.SetRGBLED(255, 255, 255);
             //SpheroName.Text = string.Format(kSpheroConnected, robot.BluetoothName);
             //SetupControls();
@@ -1170,13 +1170,13 @@ namespace SensorialRhythm
             //m_robot.SensorControl.StopAll();
 
             // stop rotors
-            m_robot.WriteToRobot(new DeviceMessage(2, 0x33, new byte[] { 0, 0, 0, 0 }));
+            _robot.WriteToRobot(new DeviceMessage(2, 0x33, new byte[] { 0, 0, 0, 0 }));
 
-            m_robot.SensorControl.Hz = 10;
+            _robot.SensorControl.Hz = 10;
 
-            m_robot.SensorControl.AccelerometerUpdatedEvent += OnAccelerometerUpdated;
-            m_robot.SensorControl.AttitudeUpdatedEvent += SensorControl_AttitudeUpdatedEvent;
-            m_robot.SensorControl.GyrometerUpdatedEvent += OnGyrometerUpdated;
+            _robot.SensorControl.AccelerometerUpdatedEvent += OnAccelerometerUpdated;
+            _robot.SensorControl.AttitudeUpdatedEvent += SensorControl_AttitudeUpdatedEvent;
+            _robot.SensorControl.GyrometerUpdatedEvent += OnGyrometerUpdated;
 
             //m_robot.CollisionControl.StartDetectionForWallCollisions();
             //m_robot.CollisionControl.CollisionDetectedEvent += OnCollisionDetected;
@@ -1231,6 +1231,10 @@ namespace SensorialRhythm
             {
                 _colorIdx = RAND.Next(0, randomColors.Length);
                 _colorTime = TimeSpan.Zero;
+
+                // TODO change this to a proper place
+
+                _robot.SetRGBLED(randomColors[_colorIdx].R, randomColors[_colorIdx].G, randomColors[_colorIdx].B);
             }
         }
 
