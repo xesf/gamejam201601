@@ -1229,7 +1229,9 @@ namespace SensorialRhythm
 
             if (_colorTime.Milliseconds > 500)
             {
-                _colorIdx = RAND.Next(0, randomColors.Length);
+                _colorIdx++; // = RAND.Next(0, randomColors.Length);
+                if (_colorIdx >= randomColors.Length - 1)
+                    _colorIdx = 0;
                 _colorTime = TimeSpan.Zero;
 
                 // TODO change this to a proper place
