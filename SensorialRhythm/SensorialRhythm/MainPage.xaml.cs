@@ -1012,6 +1012,10 @@ namespace SensorialRhythm
         };
 
         Random RAND = new Random(DateTime.Now.Millisecond);
+        int _colorIdx = 0; // color randomized index for the color array
+        TimeSpan _previousElapsedTime;
+        TimeSpan _elapsedTime;
+        TimeSpan _colorTime;
 
         public class SpheroColor {
             public Color _main;
@@ -1055,16 +1059,27 @@ namespace SensorialRhythm
         public MainPage()
         {
             this.InitializeComponent();
+        }
 
 
-            
+        private void CanvasAnimatedControl_Update(ICanvasAnimatedControl sender, CanvasAnimatedUpdateEventArgs args)
+        {
+            _previousElapsedTime = _elapsedTime;
+            _elapsedTime = args.Timing.ElapsedTime;
+
+            _colorTime += _elapsedTime;
+
+            if (_colorTime.Milliseconds > 500)
+            {
+                _colorIdx = RAND.Next(0, randomColors.Length);
+                _colorTime = TimeSpan.Zero;
+            }
         }
 
         private void CanvasAnimatedControl_Draw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
-        //void CanvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             sender.ClearColor = Colors.Black;
-            var rndIdx = RAND.Next(0, randomColors.Length);
+            
 
             Vector2 centerScreen = new Vector2((float)sender.Size.Width / 2, ((float)sender.Size.Height / 2f) + 20);
             Vector2 centerShadow = new Vector2((float)sender.Size.Width / 2, ((float)sender.Size.Height / 2f) + 180);
@@ -1076,7 +1091,7 @@ namespace SensorialRhythm
 
             var gradientStops = new CanvasGradientStop[]
             {
-                new CanvasGradientStop { Position = 0, Color = randomColors[rndIdx] },
+                new CanvasGradientStop { Position = 0, Color = randomColors[_colorIdx] },
                 new CanvasGradientStop { Position = 1, Color = Colors.Transparent }
             };
 
@@ -1101,7 +1116,7 @@ namespace SensorialRhythm
             
             
             // Color.FromArgb(255,0,192,0) // green
-            SpheroCircle sphero = new SpheroCircle(150, randomColors[rndIdx]);
+            SpheroCircle sphero = new SpheroCircle(150, randomColors[_colorIdx]);
             sphero.Draw(centerScreen, args.DrawingSession);
 
             
@@ -1119,6 +1134,5 @@ namespace SensorialRhythm
             //sphero3.Draw(circleCenter, args.DrawingSession);
         }
 
-        
     }
 }
