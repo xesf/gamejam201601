@@ -360,13 +360,17 @@ namespace SensorialRhythm
 
             if (_gameState == GameState.Connected)
             {
+                _gameState = GameState.Ready;
+            }
+
+            if (_gameState == GameState.Ready)
+            {
                 if (_movType == SpheroMovementType.ShakeIt)
                 {
                     _gameState = GameState.ThreeTwoOneGo;
                     _currentSequence = _gameSequence[0]; // starting sequence
                 }
             }
-
 
             if (_gameState != GameState.ThreeTwoOneGo)
                 return;
@@ -525,7 +529,7 @@ namespace SensorialRhythm
 
             if (_currentBeatTime < _currentSequence.Times)
             {
-                if (_currentElapsedTime.TotalMilliseconds > _currentSequence.Tempo * (_currentBeatTime + 1))
+                if (_currentElapsedTime.TotalMilliseconds > _currentSequence.Tempo /** (_currentBeatTime + 1)*/)
                 {
                     _currentColor = _currentSequence.Colors[_currentBeatTime];
                     _currentElapsedTime = TimeSpan.Zero;
@@ -535,6 +539,17 @@ namespace SensorialRhythm
                                      _currentColor.B);
 
                     _currentBeatTime++;
+                }
+            }
+
+            if (_currentBeatTime >= _currentSequence.Times)
+            {
+                if (_movType == SpheroMovementType.ShakeIt)
+                {
+                    _movType = SpheroMovementType.None;
+                    _tribal.Stop();
+                    _currentBeatTime = 0;
+                    _currentElapsedTime = TimeSpan.Zero;
                 }
             }
         }
