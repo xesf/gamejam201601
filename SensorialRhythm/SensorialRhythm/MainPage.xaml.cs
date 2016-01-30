@@ -128,6 +128,7 @@ namespace SensorialRhythm
 
         // debug
         CanvasTextFormat _debugTextFormat = new CanvasTextFormat();
+        CanvasTextFormat _debugSequenceTextFormat = new CanvasTextFormat();
 
         public class SpheroColor {
             public Color _main;
@@ -139,7 +140,7 @@ namespace SensorialRhythm
             {
                 //_glow = Color.FromArgb((byte)(Math.Max(color.A - 240, 0)), color.R, color.G, color.B);
                 _main = Color.FromArgb(color.A, color.R, color.G, color.B);
-                _inner = Color.FromArgb((byte)(Math.Max(color.A - 50,0)), (byte)(Math.Max(color.R - 50, 0)), (byte)(Math.Max(color.G - 50, 0)), (byte)(Math.Max(color.B - 50, 0)));
+                _inner = Color.FromArgb((byte)(Math.Max(color.A - 50, 0)), (byte)(Math.Max(color.R - 50, 0)), (byte)(Math.Max(color.G - 50, 0)), (byte)(Math.Max(color.B - 50, 0)));
                 _outter = Color.FromArgb((byte)(Math.Max(color.A - 100, 0)), (byte)(Math.Max(color.R - 100, 0)), (byte)(Math.Max(color.G - 100, 0)), (byte)(Math.Max(color.B - 100, 0)));
             }
         }
@@ -162,7 +163,7 @@ namespace SensorialRhythm
                 canvas.FillCircle(pos, _radius - 5, _color._inner);
                 canvas.FillCircle(pos, _radius, _color._outter);
 
-                canvas.FillEllipse(new Vector2(pos.X, pos.Y - 60), _radius - 60, _radius - 90, Color.FromArgb(50, 255, 255, 255)); 
+                canvas.FillEllipse(new Vector2(pos.X, pos.Y - 60), _radius - 60, _radius - 90, Color.FromArgb(50, 255, 255, 255));
             }
         }
 
@@ -172,6 +173,7 @@ namespace SensorialRhythm
 
             // INIT
             _debugTextFormat.FontSize = 12;
+            _debugSequenceTextFormat.FontSize = 16;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -216,7 +218,7 @@ namespace SensorialRhythm
             provider.ConnectedRobotEvent += OnRobotConnected;
             provider.FindRobots();
         }
-        
+
         private void ShutdownRobotConnection()
         {
             if (_robot != null && _robot.ConnectionState == ConnectionState.Connected)
@@ -269,7 +271,7 @@ namespace SensorialRhythm
             _gameState = GameState.ConnectionFailed;
         }
 
-        
+
         private void OnRobotConnected(object sender, Robot robot)
         {
             Debug.WriteLine(string.Format("Connected to {0}", robot));
@@ -328,7 +330,7 @@ namespace SensorialRhythm
         }
 
         #endregion
-        
+
 
         private void CanvasAnimatedControl_Update(ICanvasAnimatedControl sender, CanvasAnimatedUpdateEventArgs args)
         {
@@ -349,7 +351,7 @@ namespace SensorialRhythm
                 return;
             }
 
-            
+
             ProcessMovementType();
 
             if (_gameState == GameState.Connected)
@@ -364,32 +366,7 @@ namespace SensorialRhythm
             if (_gameState != GameState.ThreeTwoOneGo)
                 return;
 
-            if (!_tribal.IsPlaying)
-            {
-                _tribal.Play();
-            }
-
-            if (_tapType == SpheroTapType.DoubleTap)
-            {
-                _tapType = SpheroTapType.None;
-            }
-
-            _previousElapsedTime = _elapsedTime;
-            _elapsedTime = args.Timing.ElapsedTime;
-
-            _colorTime += _elapsedTime;
-
-            if (_colorTime.Milliseconds > 500)
-            {
-                _colorIdx++; // = RAND.Next(0, randomColors.Length);
-                if (_colorIdx >= randomColors.Length - 1)
-                    _colorIdx = 0;
-                _colorTime = TimeSpan.Zero;
-
-                // TODO change this to a proper place
-
-                _robot.SetRGBLED(randomColors[_colorIdx].R, randomColors[_colorIdx].G, randomColors[_colorIdx].B);
-            }
+            ProcessLevel(args);
         }
 
         private void ProcessMovementType()
@@ -425,10 +402,10 @@ namespace SensorialRhythm
         private void CanvasAnimatedControl_Draw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
         {
             sender.ClearColor = Colors.Black;
-            
+
             Vector2 centerScreen = new Vector2((float)sender.Size.Width / 2, ((float)sender.Size.Height / 2f) + 20);
             Vector2 centerShadow = new Vector2((float)sender.Size.Width / 2, ((float)sender.Size.Height / 2f) + 180);
-            
+
             args.DrawingSession.DrawText("Sensorial Rhythm", 100, 100, Colors.Red);
 
 
@@ -452,8 +429,8 @@ namespace SensorialRhythm
             //using (args.DrawingSession.CreateLayer(gradientBrush))
             {
                 args.DrawingSession.FillEllipse(centerShadow, 300, 50, brush);
-            }          
-            
+            }
+
             // Color.FromArgb(255,0,192,0) // green
             SpheroCircle sphero = new SpheroCircle(150, randomColors[_colorIdx]);
             sphero.Draw(centerScreen, args.DrawingSession);
@@ -472,7 +449,7 @@ namespace SensorialRhythm
 
 
             // Debug
-            
+
             args.DrawingSession.DrawText("Game State: " + _gameState, 10, (float)sender.Size.Height - 115, Colors.Gray, _debugTextFormat);
             args.DrawingSession.DrawText("Color [" + _colorIdx + "]: " + randomColors[_colorIdx].ToString(), 10, (float)sender.Size.Height - 100, Colors.Gray, _debugTextFormat);
             args.DrawingSession.DrawText("Gyroscope X: " + _gyroscopeX, 10, (float)sender.Size.Height - 85, Colors.Gray, _debugTextFormat);
@@ -482,6 +459,72 @@ namespace SensorialRhythm
             args.DrawingSession.DrawText("Tap Type: " + _tapType, 10, (float)sender.Size.Height - 25, Colors.Gray, _debugTextFormat);
         }
 
-        
+        // Game Sequence
+        public struct GameSequence {
+            public int Tempo;
+            public int Times;
+
+            public GameSequence(int tempo, int times)
+            {
+                Tempo = tempo;
+                Times = times;
+            }
+        }
+
+        // Sequence numbers correspond to Level UPs
+        GameSequence[] _gameSequence = {
+            new GameSequence(2400, 7)
+        };
+
+        int _currentLevel = 0;
+        int _currentBeatTime = 0;
+        TimeSpan _currentElapsedTime = TimeSpan.Zero; 
+
+        void ProcessLevel(CanvasAnimatedUpdateEventArgs args)
+        {
+            if (!_tribal.IsPlaying)
+            {
+                _tribal.Play();
+            }
+
+            if (_tapType == SpheroTapType.DoubleTap)
+            {
+                _tapType = SpheroTapType.None;
+            }
+
+            _previousElapsedTime = _elapsedTime;
+            _elapsedTime = args.Timing.ElapsedTime;
+
+            //_colorTime += _elapsedTime;
+
+            //if (_colorTime.Milliseconds > 500)
+            //{
+            //    _colorIdx++; // = RAND.Next(0, randomColors.Length);
+            //    if (_colorIdx >= randomColors.Length - 1)
+            //        _colorIdx = 0;
+            //    _colorTime = TimeSpan.Zero;
+
+            //    // TODO change this to a proper place
+
+            //    _robot.SetRGBLED(randomColors[_colorIdx].R, randomColors[_colorIdx].G, randomColors[_colorIdx].B);
+            //}
+            
+            _currentElapsedTime += _elapsedTime;
+            if (_currentBeatTime < _gameSequence[_currentLevel].Times)
+            {
+                if (_currentElapsedTime.TotalMilliseconds > _gameSequence[_currentLevel].Tempo * (_currentBeatTime + 1))
+                {
+                    _currentElapsedTime = TimeSpan.Zero;
+
+                    _colorIdx++;
+                    if (_colorIdx >= randomColors.Length - 1)
+                        _colorIdx = 0;
+
+                    _robot.SetRGBLED(randomColors[_colorIdx].R, randomColors[_colorIdx].G, randomColors[_colorIdx].B);
+
+                    //_currentBeatTime++;
+                }
+            }
+        }
     }
 }
