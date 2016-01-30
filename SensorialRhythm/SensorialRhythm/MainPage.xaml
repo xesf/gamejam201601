@@ -6,11 +6,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
-    mc:Ignorable="d">
+    mc:Ignorable="d" Loaded="Page_Loaded">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid>
-            <canvas:CanvasAnimatedControl IsFixedTimeStep="True" Update="CanvasAnimatedControl_Update" Draw="CanvasAnimatedControl_Draw" ClearColor="CornflowerBlue"/>
+            <MediaElement x:Name="playSound" Source="Sound/Amhran_na_bhFiann.ogg" AutoPlay="False" Height="0" Width="0"  />
+            <canvas:CanvasAnimatedControl Name="animatedControl" IsFixedTimeStep="True" Update="CanvasAnimatedControl_Update" Draw="CanvasAnimatedControl_Draw" ClearColor="CornflowerBlue"/>
         </Grid>
     </Grid>
 </Page>

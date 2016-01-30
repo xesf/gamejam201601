@@ -108,6 +108,7 @@
     <Content Include="Assets\Wide310x150Logo.scale-100.png" />
     <Content Include="Resources\MainScreen.PNG" />
     <Content Include="Resources\StillImages.PNG" />
+    <Content Include="Sound\Amhran_na_bhFiann.wav" />
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
@@ -118,6 +119,7 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SoundEffect.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -147,6 +149,12 @@
     <Reference Include="RobotKit, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Libs\RobotKit.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX">
+      <HintPath>Libs\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.XAudio2">
+      <HintPath>Libs\SharpDX.XAudio2.dll</HintPath>
     </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

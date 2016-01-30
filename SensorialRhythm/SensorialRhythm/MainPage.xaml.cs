@@ -23,6 +23,9 @@ using System.Diagnostics;
 using RobotKit.Internal;
 using Windows.UI.Popups;
 using Microsoft.Graphics.Canvas.Text;
+using SharpDX.XAudio2;
+using SharpDX.Multimedia;
+using SharpDX.IO;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -96,6 +99,13 @@ namespace SensorialRhythm
         };
         SpheroMovementType _movType = SpheroMovementType.None;
 
+
+
+       
+
+        SoundEffect _anthem = new SoundEffect(@"Sound\Amhran_na_bhFiann.wav");
+
+
         // debug
         CanvasTextFormat _debugTextFormat = new CanvasTextFormat();
 
@@ -144,8 +154,23 @@ namespace SensorialRhythm
 
             // INIT
             _debugTextFormat.FontSize = 12;
+
         }
-    
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            //var action = animatedControl.RunOnGameLoopThreadAsync(() => SetPlayer(playSound));
+
+        }
+
+
+        //void SetPlayer(MediaElement me)
+        //{
+        //    _soundPlayer = me;
+        //}
+
+        #region Sphero Connection
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
@@ -281,8 +306,28 @@ namespace SensorialRhythm
             _gyroscopeZ = reading.Z;
         }
 
+        #endregion
+        
+
         private void CanvasAnimatedControl_Update(ICanvasAnimatedControl sender, CanvasAnimatedUpdateEventArgs args)
         {
+            //if (_soundPlayer == null)
+            //{
+            //    _soundPlayer = new MediaElement();
+            //    _soundPlayer.AutoPlay = false;
+            //    _soundPlayer.Source = new Uri("Sound/Amhran_na_bhFiann.ogg");
+
+            //    sender.
+
+            //    _soundPlayer.Play();
+            //}
+
+            if (!_anthem.IsPlaying)
+            {
+                _anthem.Play();
+            }
+
+
             _previousElapsedTime = _elapsedTime;
             _elapsedTime = args.Timing.ElapsedTime;
 
@@ -390,5 +435,6 @@ namespace SensorialRhythm
             args.DrawingSession.DrawText("Movement Type :" + _movType, 10, (float)sender.Size.Height - 40, Colors.Gray, _debugTextFormat);
         }
 
+        
     }
 }
