@@ -95,9 +95,17 @@ namespace SensorialRhythm
             RollRight,
             YawlClockwise,
             YawlCounterClockwise,
-            ShakeIt
+            ShakeIt,
+            DoubleTap
         };
         SpheroMovementType _movType = SpheroMovementType.None;
+
+        enum SpheroTapType
+        {
+            None,
+            DoubleTap
+        };
+        SpheroTapType _tapType = SpheroTapType.None;
 
         enum GameState
         {
@@ -153,12 +161,10 @@ namespace SensorialRhythm
                 canvas.FillCircle(pos, _radius - 18, _color._main);
                 canvas.FillCircle(pos, _radius - 5, _color._inner);
                 canvas.FillCircle(pos, _radius, _color._outter);
-                
 
                 canvas.FillEllipse(new Vector2(pos.X, pos.Y - 60), _radius - 60, _radius - 90, Color.FromArgb(50, 255, 255, 255)); 
             }
         }
-
 
         public MainPage()
         {
@@ -166,20 +172,11 @@ namespace SensorialRhythm
 
             // INIT
             _debugTextFormat.FontSize = 12;
-
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            //var action = animatedControl.RunOnGameLoopThreadAsync(() => SetPlayer(playSound));
-
         }
-
-
-        //void SetPlayer(MediaElement me)
-        //{
-        //    _soundPlayer = me;
-        //}
 
         #region Sphero Connection
 
@@ -224,7 +221,7 @@ namespace SensorialRhythm
         {
             if (_robot != null && _robot.ConnectionState == ConnectionState.Connected)
             {
-                //_robot.SensorControl.StopAll();
+                _robot.SensorControl.StopAll();
                 _robot.Sleep();
                 // temporary while I work on Disconnect.
                 _robot.Disconnect();
@@ -233,7 +230,7 @@ namespace SensorialRhythm
 
                 //_robot.SensorControl.AccelerometerUpdatedEvent -= OnAccelerometerUpdated;
                 //_robot.SensorControl.AttitudeUpdatedEvent -= SensorControl_AttitudeUpdatedEvent;
-                //_robot.SensorControl.GyrometerUpdatedEvent -= OnGyrometerUpdated;
+                _robot.SensorControl.GyrometerUpdatedEvent -= OnGyrometerUpdated;
 
                 //m_robot.CollisionControl.StopDetection();
                 //m_robot.CollisionControl.CollisionDetectedEvent -= OnCollisionDetected;
@@ -256,6 +253,8 @@ namespace SensorialRhythm
                 //ConnectionToggle.OnContent = "Connecting...";
                 _robot = (Sphero)robot;
                 //SpheroName.Text = string.Format(kConnectingToSphero, robot.BluetoothName);
+
+                _gameState = GameState.Connecting;
             }
         }
 
@@ -266,6 +265,8 @@ namespace SensorialRhythm
             dialog.DefaultCommandIndex = 0;
             dialog.CancelCommandIndex = 1;
             dialog.ShowAsync();
+
+            _gameState = GameState.ConnectionFailed;
         }
 
         
@@ -280,12 +281,13 @@ namespace SensorialRhythm
             //SpheroName.Text = string.Format(kSpheroConnected, robot.BluetoothName);
             //SetupControls();
 
-            //m_robot.SetHeading(0);
+            //_robot.SetHeading(0);
+            //_robot.Roll(0, 1);
 
             //m_robot.SensorControl.StopAll();
 
             // stop rotors
-            //_robot.WriteToRobot(new DeviceMessage(2, 0x33, new byte[] { 0, 0, 0, 0 }));
+            _robot.WriteToRobot(new DeviceMessage(2, 0x33, new byte[] { 0, 0, 0, 0 }));
 
             _robot.SensorControl.Hz = 10;
 
@@ -293,8 +295,15 @@ namespace SensorialRhythm
             _robot.SensorControl.AttitudeUpdatedEvent += SensorControl_AttitudeUpdatedEvent;
             _robot.SensorControl.GyrometerUpdatedEvent += OnGyrometerUpdated;
 
-            //m_robot.CollisionControl.StartDetectionForWallCollisions();
-            //m_robot.CollisionControl.CollisionDetectedEvent += OnCollisionDetected;
+            _robot.CollisionControl.StartDetectionForWallCollisions();
+            _robot.CollisionControl.CollisionDetectedEvent += OnCollisionDetected;
+
+            _gameState = GameState.Connected;
+        }
+
+        private void OnCollisionDetected(object sender, CollisionData e)
+        {
+            _tapType = SpheroTapType.DoubleTap;
         }
 
         private void SensorControl_AttitudeUpdatedEvent(object sender, AttitudeReading reading)
@@ -323,18 +332,47 @@ namespace SensorialRhythm
 
         private void CanvasAnimatedControl_Update(ICanvasAnimatedControl sender, CanvasAnimatedUpdateEventArgs args)
         {
-            //if (!_anthem.IsPlaying)
-            //{
-            //    _anthem.Play();
-            //}
+            if (_gameState == GameState.Connecting)
+            {
+                if (_robot.ConnectionState == ConnectionState.Failed/* ||
+                    _robot.ConnectionState == ConnectionState.Disconnected*/)
+                {
+                    _gameState = GameState.ConnectionFailed;
+                }
+                return;
+            }
+            if (_gameState == GameState.ConnectionFailed)
+            {
+                _robot = null;
+                SetupRobotConnection();
+                _gameState = GameState.Connecting;
+                return;
+            }
+
+            
+            ProcessMovementType();
+
+            if (_gameState == GameState.Connected)
+            {
+                if (_movType == SpheroMovementType.ShakeIt)
+                {
+                    _gameState = GameState.ThreeTwoOneGo;
+                }
+            }
 
 
+            if (_gameState != GameState.ThreeTwoOneGo)
+                return;
 
             if (!_tribal.IsPlaying)
             {
                 _tribal.Play();
             }
 
+            if (_tapType == SpheroTapType.DoubleTap)
+            {
+                _tapType = SpheroTapType.None;
+            }
 
             _previousElapsedTime = _elapsedTime;
             _elapsedTime = args.Timing.ElapsedTime;
@@ -352,16 +390,14 @@ namespace SensorialRhythm
 
                 _robot.SetRGBLED(randomColors[_colorIdx].R, randomColors[_colorIdx].G, randomColors[_colorIdx].B);
             }
-
-            ProcessMovementType();
         }
 
         private void ProcessMovementType()
         {
             float minValue = -650;
             float maxValue = 650;
-            float minShakeValue = -1200;
-            float maxShakeValue = 1200;
+            float minShakeValue = -1300;
+            float maxShakeValue = 1300;
 
             _movType = SpheroMovementType.None;
 
@@ -436,11 +472,14 @@ namespace SensorialRhythm
 
 
             // Debug
-            args.DrawingSession.DrawText("Color [" + _colorIdx + "] " + randomColors[_colorIdx].ToString(), 10, (float)sender.Size.Height - 100, Colors.Gray, _debugTextFormat);
-            args.DrawingSession.DrawText("Gyroscope X :" + _gyroscopeX, 10, (float)sender.Size.Height - 85, Colors.Gray, _debugTextFormat);
-            args.DrawingSession.DrawText("Gyroscope Y :" + _gyroscopeY, 10, (float)sender.Size.Height - 70, Colors.Gray, _debugTextFormat);
-            args.DrawingSession.DrawText("Gyroscope Z :" + _gyroscopeZ, 10, (float)sender.Size.Height - 55, Colors.Gray, _debugTextFormat);
-            args.DrawingSession.DrawText("Movement Type :" + _movType, 10, (float)sender.Size.Height - 40, Colors.Gray, _debugTextFormat);
+            
+            args.DrawingSession.DrawText("Game State: " + _gameState, 10, (float)sender.Size.Height - 115, Colors.Gray, _debugTextFormat);
+            args.DrawingSession.DrawText("Color [" + _colorIdx + "]: " + randomColors[_colorIdx].ToString(), 10, (float)sender.Size.Height - 100, Colors.Gray, _debugTextFormat);
+            args.DrawingSession.DrawText("Gyroscope X: " + _gyroscopeX, 10, (float)sender.Size.Height - 85, Colors.Gray, _debugTextFormat);
+            args.DrawingSession.DrawText("Gyroscope Y: " + _gyroscopeY, 10, (float)sender.Size.Height - 70, Colors.Gray, _debugTextFormat);
+            args.DrawingSession.DrawText("Gyroscope Z: " + _gyroscopeZ, 10, (float)sender.Size.Height - 55, Colors.Gray, _debugTextFormat);
+            args.DrawingSession.DrawText("Movement Type: " + _movType, 10, (float)sender.Size.Height - 40, Colors.Gray, _debugTextFormat);
+            args.DrawingSession.DrawText("Tap Type: " + _tapType, 10, (float)sender.Size.Height - 25, Colors.Gray, _debugTextFormat);
         }
 
         
