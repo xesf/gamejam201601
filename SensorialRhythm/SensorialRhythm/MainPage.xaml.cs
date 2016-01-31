@@ -450,8 +450,8 @@ namespace SensorialRhythm
         {
             float minValue = -650;
             float maxValue = 650;
-            float minShakeValue = -1500;
-            float maxShakeValue = 1500;
+            float minShakeValue = -1400;
+            float maxShakeValue = 1400;
 
             _movType = SpheroMovementType.None;
 
