@@ -125,7 +125,8 @@ namespace SensorialRhythm
 
         SoundEffect _tribal = new SoundEffect(@"Sound\african_tribal_short.wav");
 
-
+        CanvasTextFormat _gameNameTextFormat = new CanvasTextFormat();
+        CanvasTextFormat _uiTextFormat = new CanvasTextFormat();
         // debug
         CanvasTextFormat _debugTextFormat = new CanvasTextFormat();
         CanvasTextFormat _debugSequenceTextFormat = new CanvasTextFormat();
@@ -171,11 +172,9 @@ namespace SensorialRhythm
         {
             this.InitializeComponent();
 
-            // INIT
-            _debugTextFormat.FontSize = 12;
-            _debugSequenceTextFormat.FontSize = 16;
+            initFontSize();
         }
-
+        
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
         }
@@ -406,6 +405,16 @@ namespace SensorialRhythm
             }
         }
 
+        private void initFontSize()
+        {
+            // INIT
+            _debugTextFormat.FontSize = 12;
+            _debugSequenceTextFormat.FontSize = 16;
+
+            _gameNameTextFormat.FontSize = 48;
+            _uiTextFormat.FontSize = 36;
+        }
+
         private void CanvasAnimatedControl_Draw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
         {
             sender.ClearColor = Colors.Black;
@@ -413,7 +422,13 @@ namespace SensorialRhythm
             Vector2 centerScreen = new Vector2((float)sender.Size.Width / 2, ((float)sender.Size.Height / 2f) + 20);
             Vector2 centerShadow = new Vector2((float)sender.Size.Width / 2, ((float)sender.Size.Height / 2f) + 180);
 
-            args.DrawingSession.DrawText("Sensorial Rhythm", 100, 100, Colors.Red);
+            args.DrawingSession.DrawText("Sensorial Rhythm", 20, 20, Colors.DarkOrange, _gameNameTextFormat);
+
+            if (_gameState == GameState.ThreeTwoOneGo || _gameState == GameState.LevelUp)
+            {
+                args.DrawingSession.DrawText(string.Format("Level {0}/{1}", _currentLevel, _gameSequence.Length), (float)sender.Size.Width - 200, 20, Colors.DarkOrange, _uiTextFormat);
+                args.DrawingSession.DrawText(string.Format("Points {0}", _points), (float)sender.Size.Width - 200, 70, Colors.DarkOrange, _uiTextFormat);
+            }
 
 
             var gradientStops = new CanvasGradientStop[]
@@ -443,8 +458,9 @@ namespace SensorialRhythm
             sphero.Draw(centerScreen, args.DrawingSession);
 
             // Debug
-            args.DrawingSession.DrawText("Game State: " + _gameState, 10, (float)sender.Size.Height - 115, Colors.Gray, _debugTextFormat);
-            args.DrawingSession.DrawText("Color [" + _currentBeatTime + "]: " + _currentColor.ToString(), 10, (float)sender.Size.Height - 100, Colors.Gray, _debugTextFormat);
+            args.DrawingSession.DrawText("Game State: " + _gameState, 10, (float)sender.Size.Height - 130, Colors.Gray, _debugTextFormat);
+            args.DrawingSession.DrawText("Current Beat: " + _currentBeatTime, 10, (float)sender.Size.Height - 115, Colors.Gray, _debugTextFormat);
+            args.DrawingSession.DrawText("Color: " + _currentColor.ToString(), 10, (float)sender.Size.Height - 100, Colors.Gray, _debugTextFormat);
             args.DrawingSession.DrawText("Gyroscope X: " + _gyroscopeX, 10, (float)sender.Size.Height - 85, Colors.Gray, _debugTextFormat);
             args.DrawingSession.DrawText("Gyroscope Y: " + _gyroscopeY, 10, (float)sender.Size.Height - 70, Colors.Gray, _debugTextFormat);
             args.DrawingSession.DrawText("Gyroscope Z: " + _gyroscopeZ, 10, (float)sender.Size.Height - 55, Colors.Gray, _debugTextFormat);
@@ -671,6 +687,7 @@ namespace SensorialRhythm
         };
 
         int _currentLevel = 0;
+        int _points = 0;
         int _currentBeatTime = 0;
         TimeSpan _currentElapsedTime = TimeSpan.Zero;
         GameSequence _currentSequence;
