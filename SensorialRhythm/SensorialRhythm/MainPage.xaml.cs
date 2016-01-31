@@ -77,10 +77,10 @@ namespace SensorialRhythm
         };
 
         Random RAND = new Random(DateTime.Now.Millisecond);
-        int _colorIdx = 0; // color randomized index for the color array
+        //int _colorIdx = 0; // color randomized index for the color array
         TimeSpan _previousElapsedTime;
         TimeSpan _elapsedTime;
-        TimeSpan _colorTime;
+        //TimeSpan _colorTime;
 
         Sphero _robot = null;
         float _gyroscopeX = 0;
@@ -165,6 +165,28 @@ namespace SensorialRhythm
                 canvas.FillCircle(pos, _radius, _color._outter);
 
                 canvas.FillEllipse(new Vector2(pos.X, pos.Y - 60), _radius - 60, _radius - 90, Color.FromArgb(50, 255, 255, 255));
+            }
+        }
+
+        public class SpheroCircleSmall
+        {
+            public float _radius;
+            public SpheroColor _color;
+
+            public SpheroCircleSmall(float radius, Color color)
+            {
+                _radius = radius;
+                _color = new SpheroColor(color);
+            }
+
+            public void Draw(Vector2 pos, CanvasDrawingSession canvas)
+            {
+                //canvas.FillCircle(pos, _radius + 30, _color._glow);
+                canvas.FillCircle(pos, _radius - 6, _color._main);
+                canvas.FillCircle(pos, _radius - 2, _color._inner);
+                canvas.FillCircle(pos, _radius, _color._outter);
+
+                canvas.FillEllipse(new Vector2(pos.X, pos.Y - 20), _radius - 20, _radius - 30, Color.FromArgb(50, 255, 255, 255));
             }
         }
 
@@ -369,6 +391,8 @@ namespace SensorialRhythm
                     _currentLevel = 0;
                     _gameState = GameState.ThreeTwoOneGo;
                     _currentSequence = _gameSequence[_currentLevel]; // starting sequence
+
+                    
                 }
             }
 
@@ -417,6 +441,11 @@ namespace SensorialRhythm
 
         private void CanvasAnimatedControl_Draw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
         {
+            if (_posSpheroSeq == Vector2.Zero)
+            {
+                _posSpheroSeq = new Vector2((float)sender.Size.Width - 300, ((float)sender.Size.Height / 2f) + 20);
+            }
+
             sender.ClearColor = Colors.Black;
 
             Vector2 centerScreen = new Vector2((float)sender.Size.Width / 2, ((float)sender.Size.Height / 2f) + 20);
@@ -448,14 +477,26 @@ namespace SensorialRhythm
                 RadiusY = 50,
             };
 
-            //using (args.DrawingSession.CreateLayer(gradientBrush))
+            args.DrawingSession.FillEllipse(centerShadow, 300, 50, brush);
+
+
+
+
+            // UI sequence
+            foreach (var seq in _gameSequence)
             {
-                args.DrawingSession.FillEllipse(centerShadow, 300, 50, brush);
+                for (int t = 0; t < seq.Times; t++)
+                {
+                    SpheroCircleSmall spheroUI = new SpheroCircleSmall(50, seq.Colors[t]);
+                    spheroUI.Draw(_posSpheroSeq + new Vector2(150 * (t+1), 0), args.DrawingSession);
+                }
             }
 
-            // Color.FromArgb(255,0,192,0) // green
             SpheroCircle sphero = new SpheroCircle(150, _currentColor);
             sphero.Draw(centerScreen, args.DrawingSession);
+
+            
+
 
             // Debug
             args.DrawingSession.DrawText("Game State: " + _gameState, 10, (float)sender.Size.Height - 130, Colors.Gray, _debugTextFormat);
@@ -692,6 +733,8 @@ namespace SensorialRhythm
         TimeSpan _currentElapsedTime = TimeSpan.Zero;
         GameSequence _currentSequence;
         Color _currentColor = Colors.DarkGray;
+        Vector2 _posSpheroSeq;
+
 
         void ProcessLevel(CanvasAnimatedUpdateEventArgs args)
         {
@@ -742,6 +785,8 @@ namespace SensorialRhythm
 
             if (_currentBeatTime < _currentSequence.Times)
             {
+                _posSpheroSeq.X -= 1; // TODO syncronize the movement with the song and active color
+
                 if (_currentElapsedTime.TotalMilliseconds > _currentSequence.Tempo ||
                     _currentElapsedTime.TotalMilliseconds > _currentSequence.Tempo + _currentSequence.TempoColorSwitch)
                 {
