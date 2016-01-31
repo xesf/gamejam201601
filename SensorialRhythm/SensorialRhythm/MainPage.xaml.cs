@@ -417,15 +417,16 @@ namespace SensorialRhythm
                 _gameState = GameState.Ready;
             }
 
-            if (_gameState == GameState.Ready)
+            if (_gameState == GameState.Ready || _gameState == GameState.GameOver)
             {
                 if (_movType == SpheroMovementType.ShakeIt)
                 {
+                    _points = 0;
+                    _numFails = 0;
                     _currentLevel = 0;
+                    _currentBeatTime = 0;
                     _gameState = GameState.ThreeTwoOneGo;
                     _currentSequence = _gameSequence[_currentLevel]; // starting sequence
-
-                    
                 }
             }
 
@@ -498,6 +499,11 @@ namespace SensorialRhythm
             if (_gameState == GameState.Ready)
             {
                 args.DrawingSession.DrawText("Ready?!", centerScreen + new Vector2(-75, -250), Colors.DarkRed, _gameNameTextFormat);
+            }
+
+            if (_gameState == GameState.GameOver)
+            {
+                args.DrawingSession.DrawText("Game Over", centerScreen + new Vector2(-100, -250), Colors.DarkRed, _gameNameTextFormat);
             }
 
             if (_gameState == GameState.ThreeTwoOneGo || _gameState == GameState.LevelUp || _gameState2 == GameState.GotPoints)
@@ -813,6 +819,7 @@ namespace SensorialRhythm
 
         int _currentLevel = 0;
         int _points = 0;
+        int _numFails = 0;
         int _currentBeatTime = 0;
         int _prevBeatTime = 0;
         TimeSpan _currentElapsedTime = TimeSpan.Zero;
@@ -862,7 +869,7 @@ namespace SensorialRhythm
             }
 
             if (_gameState2 == GameState.CheckMovement &&
-                _rewardElapsedTime.TotalMilliseconds > 1500)
+                _rewardElapsedTime.TotalMilliseconds > 500)
             {
                 if (_currentMovType == _currentSequence.Movements[_currentBeatTime])
                 {
@@ -874,6 +881,7 @@ namespace SensorialRhythm
                 {
                     _currentMovType = SpheroMovementType.None;
                     _gameState2 = GameState.Failed;
+                    _numFails++;
                 }
             }
 
@@ -902,12 +910,25 @@ namespace SensorialRhythm
                 }
             }
 
-            if (_currentBeatTime >= _currentSequence.Times && 
+            if (_currentBeatTime >= _currentSequence.Times &&
                 _movType == SpheroMovementType.ShakeIt)
             {
                 _movType = SpheroMovementType.None;
                 _tribal.Stop();
 
+                _currentBeatTime = 0;
+                _currentLevel = 0;
+                _currentElapsedTime = TimeSpan.Zero;
+            }
+
+            if (_numFails > 5)
+            {
+                _gameState = GameState.GameOver;
+                _movType = SpheroMovementType.None;
+                _tribal.Stop();
+
+                _currentColor = Colors.Red;
+                _currentBeatTime = 0;
                 _currentBeatTime = 0;
                 _currentLevel = 0;
                 _currentElapsedTime = TimeSpan.Zero;
