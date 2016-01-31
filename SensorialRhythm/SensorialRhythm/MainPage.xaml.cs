@@ -128,6 +128,7 @@ namespace SensorialRhythm
             ConnectionFailed,
             Ready,
             ThreeTwoOneGo,
+            CheckMovement,
             GotPoints,
             Failed,
             LevelUp,
@@ -432,8 +433,8 @@ namespace SensorialRhythm
 
         private void ProcessMovementType()
         {
-            float minValue = -650;
-            float maxValue = 650;
+            float minValue = -500;
+            float maxValue = 500;
             float minShakeValue = -1500;
             float maxShakeValue = 1500;
 
@@ -858,13 +859,6 @@ namespace SensorialRhythm
             _currentElapsedTime += _elapsedTime;
             //_currentSequence = _gameSequence[_currentLevel];
 
-            if (_gameState2 != GameState.None && // GotPoints or Failed
-                _currentElapsedTime.TotalMilliseconds > 1500)
-            {
-                _gameState2 = GameState.None;
-            }
-
-
             if (_currentBeatTime < _currentSequence.Times)
             {
                 _posSpheroSeq.X -= 1; // TODO syncronize the movement with the song and active color
@@ -882,20 +876,32 @@ namespace SensorialRhythm
 
                     _currentBeatTime++;
 
-                    if (_movType == _currentSequence.Movements[_currentBeatTime - 1])
-                    {
-                        _gameState2 = GameState.GotPoints;
-                        _currentIdxReward = RAND.Next(0, _rewardMessage.Length - 1);
-                        _points += (_currentIdxReward + 1) * _currentLevel * _currentBeatTime;
-                    }
-                    else
-                    {
-                        _gameState2 = GameState.Failed;
-                    }
+                    _gameState2 = GameState.CheckMovement;
 
                     if (_currentBeatTime == _currentSequence.Times)
                         _gameState = GameState.LevelUp;
                 }
+            }
+
+            if (_gameState2 == GameState.CheckMovement &&
+                _currentElapsedTime.TotalMilliseconds > 1000)
+            {
+                if (_movType == _currentSequence.Movements[_currentBeatTime])
+                {
+                    _gameState2 = GameState.GotPoints;
+                    _currentIdxReward = RAND.Next(0, _rewardMessage.Length - 1);
+                    _points += (_currentIdxReward + 1) * _currentLevel * _currentBeatTime;
+                }
+                else
+                {
+                    _gameState2 = GameState.Failed;
+                }
+            }
+
+            if (_gameState2 != GameState.None && // GotPoints or Failed
+                _currentElapsedTime.TotalMilliseconds > 1500)
+            {
+                _gameState2 = GameState.None;
             }
 
             if (_currentBeatTime >= _currentSequence.Times && 
