@@ -509,13 +509,15 @@ namespace SensorialRhythm
                 args.DrawingSession.DrawText(string.Format("Points {0}", _points), (float)sender.Size.Width - 200, 70, Colors.DarkOrange, _uiTextFormat);
 
 
-                if (_gameState2 == GameState.GotPoints || _gameState2 == GameState.Failed)
+                if (!(_currentBeatTime < 1 && _currentLevel < 2))
                 {
-                    if (_gameState2 == GameState.Failed)
-                        _currentIdxReward = 3; // failed
-                    args.DrawingSession.DrawText(_rewardMessage[_currentIdxReward], centerScreen + new Vector2(-100, -250), _rewardMessageColor[_currentIdxReward], _gameNameTextFormat);
+                    if (_gameState2 == GameState.GotPoints || _gameState2 == GameState.Failed)
+                    {
+                        if (_gameState2 == GameState.Failed)
+                            _currentIdxReward = 3; // failed
+                        args.DrawingSession.DrawText(_rewardMessage[_currentIdxReward], centerScreen + new Vector2(-100, -250), _rewardMessageColor[_currentIdxReward], _gameNameTextFormat);
+                    }
                 }
-
             }
 
 
@@ -581,7 +583,7 @@ namespace SensorialRhythm
             args.DrawingSession.DrawText("Gyroscope Y: " + _gyroscopeY, 10, (float)sender.Size.Height - 70, Colors.Gray, _debugTextFormat);
             args.DrawingSession.DrawText("Gyroscope Z: " + _gyroscopeZ, 10, (float)sender.Size.Height - 55, Colors.Gray, _debugTextFormat);
             args.DrawingSession.DrawText("Movement Type: " + _movType, 10, (float)sender.Size.Height - 40, Colors.Gray, _debugTextFormat);
-            args.DrawingSession.DrawText("Tap Type: " + _tapType, 10, (float)sender.Size.Height - 25, Colors.Gray, _debugTextFormat);
+            args.DrawingSession.DrawText("Current Movement Type: " + _currentMovType, 10, (float)sender.Size.Height - 25, Colors.Gray, _debugTextFormat);
         }
 
         // Game Sequence
@@ -812,7 +814,9 @@ namespace SensorialRhythm
         int _currentLevel = 0;
         int _points = 0;
         int _currentBeatTime = 0;
+        int _prevBeatTime = 0;
         TimeSpan _currentElapsedTime = TimeSpan.Zero;
+        TimeSpan _rewardElapsedTime = TimeSpan.Zero;
         GameSequence _currentSequence;
         Color _currentColor = Colors.DarkGray;
         Vector2 _posSpheroSeq;
@@ -847,28 +851,30 @@ namespace SensorialRhythm
 
             _previousElapsedTime = _elapsedTime;
             _elapsedTime = args.Timing.ElapsedTime;
-
-            //_colorTime += _elapsedTime;
-
-            //if (_colorTime.Milliseconds > 500)
-            //{
-            //    _colorIdx++; // = RAND.Next(0, randomColors.Length);
-            //    if (_colorIdx >= randomColors.Length - 1)
-            //        _colorIdx = 0;
-            //    _colorTime = TimeSpan.Zero;
-
-            //    // TODO change this to a proper place
-
-            //    _robot.SetRGBLED(randomColors[_colorIdx].R, randomColors[_colorIdx].G, randomColors[_colorIdx].B);
-            //}
-            
             _currentElapsedTime += _elapsedTime;
-            //_currentSequence = _gameSequence[_currentLevel];
+            _rewardElapsedTime += _elapsedTime;
 
             if ((_gameState2 == GameState.GotPoints || _gameState2 == GameState.Failed) &&
-                _currentElapsedTime.TotalMilliseconds > 1000)
+                _currentElapsedTime.TotalMilliseconds > 2000)
             {
                 _gameState2 = GameState.None;
+                _rewardElapsedTime = TimeSpan.Zero;
+            }
+
+            if (_gameState2 == GameState.CheckMovement &&
+                _rewardElapsedTime.TotalMilliseconds > 1500)
+            {
+                if (_currentMovType == _currentSequence.Movements[_currentBeatTime])
+                {
+                    _gameState2 = GameState.GotPoints;
+                    _currentIdxReward = RAND.Next(0, _rewardMessage.Length - 1);
+                    _points += (_currentIdxReward + 1) * _currentLevel * _currentBeatTime;
+                }
+                else
+                {
+                    _currentMovType = SpheroMovementType.None;
+                    _gameState2 = GameState.Failed;
+                }
             }
 
             if (_currentBeatTime < _currentSequence.Times)
@@ -886,28 +892,13 @@ namespace SensorialRhythm
                                      _currentColor.G,
                                      _currentColor.B);
 
+                    _prevBeatTime = _currentBeatTime;
                     _currentBeatTime++;
 
                     _gameState2 = GameState.CheckMovement;
 
                     if (_currentBeatTime == _currentSequence.Times)
                         _gameState = GameState.LevelUp;
-                }
-            }
-
-            if (_gameState2 == GameState.CheckMovement &&
-                _currentElapsedTime.TotalMilliseconds > 1000)
-            {
-                if (_currentMovType == _currentSequence.Movements[_currentBeatTime])
-                {
-                    _gameState2 = GameState.GotPoints;
-                    _currentIdxReward = RAND.Next(0, _rewardMessage.Length - 1);
-                    _points += (_currentIdxReward + 1) * _currentLevel * _currentBeatTime;
-                }
-                else
-                {
-                    _currentMovType = SpheroMovementType.None;
-                    _gameState2 = GameState.Failed;
                 }
             }
 
