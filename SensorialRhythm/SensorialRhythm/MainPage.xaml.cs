@@ -128,10 +128,27 @@ namespace SensorialRhythm
             ConnectionFailed,
             Ready,
             ThreeTwoOneGo,
+            GotPoints,
+            Failed,
             LevelUp,
             GameOver
         }
         GameState _gameState = GameState.None;
+        GameState _gameState2 = GameState.None;
+
+        public string[] _rewardMessage = {
+            "Perfect!",
+            " Great! ",
+            "Not Bad!",
+            "Boooooo "
+        };
+
+        public Color[] _rewardMessageColor = {
+            Colors.Green,//"Perfect!",
+            Colors.Yellow,//" Great! ",
+            Colors.Orange,//"Not Bad!",
+            Colors.Red//"Booooooo"
+        };
 
 
         //SoundEffect _anthem = new SoundEffect(@"Sound\Amhran_na_bhFiann.wav");
@@ -417,8 +434,8 @@ namespace SensorialRhythm
         {
             float minValue = -650;
             float maxValue = 650;
-            float minShakeValue = -1300;
-            float maxShakeValue = 1300;
+            float minShakeValue = -1500;
+            float maxShakeValue = 1500;
 
             _movType = SpheroMovementType.None;
 
@@ -471,10 +488,27 @@ namespace SensorialRhythm
 
             args.DrawingSession.DrawText("Sensorial Rhythm", 20, 20, Colors.DarkOrange, _gameNameTextFormat);
 
-            if (_gameState == GameState.ThreeTwoOneGo || _gameState == GameState.LevelUp)
+            if (_gameState == GameState.Ready)
             {
+                args.DrawingSession.DrawText("Ready?!", centerScreen + new Vector2(-75, -250), Colors.DarkRed, _gameNameTextFormat);
+            }
+
+            if (_gameState == GameState.ThreeTwoOneGo || _gameState == GameState.LevelUp || _gameState2 == GameState.GotPoints)
+            {
+                if (_currentBeatTime < 1 && _currentLevel < 2)
+                    args.DrawingSession.DrawText("Three, Two, One... GO!!!", centerScreen + new Vector2(-250, -250), Colors.Blue, _gameNameTextFormat);
+
                 args.DrawingSession.DrawText(string.Format("Level {0}/{1}", _currentLevel, _gameSequence.Length), (float)sender.Size.Width - 200, 20, Colors.DarkOrange, _uiTextFormat);
                 args.DrawingSession.DrawText(string.Format("Points {0}", _points), (float)sender.Size.Width - 200, 70, Colors.DarkOrange, _uiTextFormat);
+
+
+                if (_gameState2 == GameState.GotPoints || _gameState2 == GameState.Failed)
+                {
+                    if (_gameState2 == GameState.Failed)
+                        _currentIdxReward = 3; // failed
+                    args.DrawingSession.DrawText(_rewardMessage[_currentIdxReward], centerScreen + new Vector2(-100, -250), _rewardMessageColor[_currentIdxReward], _gameNameTextFormat);
+                }
+
             }
 
 
@@ -498,7 +532,7 @@ namespace SensorialRhythm
             args.DrawingSession.FillEllipse(centerShadow, 300, 50, brush);
 
 
-            //if (_gameState == GameState.ThreeTwoOneGo || _gameState == GameState.LevelUp)
+            if (_gameState == GameState.ThreeTwoOneGo || _gameState == GameState.LevelUp || _gameState2 == GameState.GotPoints)
             {
                 args.DrawingSession.DrawLine((float)sender.Size.Width - 375,
                                         ((float)sender.Size.Height / 2f) + 20 - 75,
@@ -775,7 +809,7 @@ namespace SensorialRhythm
         GameSequence _currentSequence;
         Color _currentColor = Colors.DarkGray;
         Vector2 _posSpheroSeq;
-
+        int _currentIdxReward;
 
         void ProcessLevel(CanvasAnimatedUpdateEventArgs args)
         {
@@ -791,7 +825,7 @@ namespace SensorialRhythm
                 _gameState = GameState.ThreeTwoOneGo;
             }
 
-            if (_gameState != GameState.ThreeTwoOneGo)
+            if (_gameState != GameState.ThreeTwoOneGo && _gameState2 != GameState.GotPoints)
                 return;
 
             if (!_tribal.IsPlaying)
@@ -824,6 +858,13 @@ namespace SensorialRhythm
             _currentElapsedTime += _elapsedTime;
             //_currentSequence = _gameSequence[_currentLevel];
 
+            if (_gameState2 != GameState.None && // GotPoints or Failed
+                _currentElapsedTime.TotalMilliseconds > 1500)
+            {
+                _gameState2 = GameState.None;
+            }
+
+
             if (_currentBeatTime < _currentSequence.Times)
             {
                 _posSpheroSeq.X -= 1; // TODO syncronize the movement with the song and active color
@@ -840,6 +881,17 @@ namespace SensorialRhythm
                                      _currentColor.B);
 
                     _currentBeatTime++;
+
+                    if (_movType == _currentSequence.Movements[_currentBeatTime - 1])
+                    {
+                        _gameState2 = GameState.GotPoints;
+                        _currentIdxReward = RAND.Next(0, _rewardMessage.Length - 1);
+                        _points += (_currentIdxReward + 1) * _currentLevel * _currentBeatTime;
+                    }
+                    else
+                    {
+                        _gameState2 = GameState.Failed;
+                    }
 
                     if (_currentBeatTime == _currentSequence.Times)
                         _gameState = GameState.LevelUp;
