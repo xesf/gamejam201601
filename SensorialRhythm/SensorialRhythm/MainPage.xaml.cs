@@ -427,6 +427,10 @@ namespace SensorialRhythm
                     _currentBeatTime = 0;
                     _gameState = GameState.ThreeTwoOneGo;
                     _currentSequence = _gameSequence[_currentLevel]; // starting sequence
+                    //if (_posSpheroSeq == Vector2.Zero)
+                    //{
+                        _posSpheroSeq = new Vector2((float)sender.Size.Width - 300, ((float)sender.Size.Height / 2f) + 20);
+                    //}
                 }
             }
 
@@ -435,8 +439,8 @@ namespace SensorialRhythm
 
         private void ProcessMovementType()
         {
-            float minValue = -500;
-            float maxValue = 500;
+            float minValue = -650;
+            float maxValue = 650;
             float minShakeValue = -1500;
             float maxShakeValue = 1500;
 
@@ -484,11 +488,6 @@ namespace SensorialRhythm
 
         private void CanvasAnimatedControl_Draw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
         {
-            if (_posSpheroSeq == Vector2.Zero)
-            {
-                _posSpheroSeq = new Vector2((float)sender.Size.Width - 300, ((float)sender.Size.Height / 2f) + 20);
-            }
-
             sender.ClearColor = Colors.Black;
 
             Vector2 centerScreen = new Vector2((float)sender.Size.Width / 2, ((float)sender.Size.Height / 2f) + 20);
@@ -503,7 +502,7 @@ namespace SensorialRhythm
 
             if (_gameState == GameState.GameOver)
             {
-                args.DrawingSession.DrawText("Game Over", centerScreen + new Vector2(-100, -250), Colors.DarkRed, _gameNameTextFormat);
+                args.DrawingSession.DrawText("Game Over", centerScreen + new Vector2(-125, -250), Colors.DarkRed, _gameNameTextFormat);
             }
 
             if (_gameState == GameState.ThreeTwoOneGo || _gameState == GameState.LevelUp || _gameState2 == GameState.GotPoints)
@@ -614,7 +613,7 @@ namespace SensorialRhythm
         GameSequence[] _gameSequence = {
             new GameSequence(1, 1, new Color[]{ Color.FromArgb(255, 0, 255, 0), // green, 
             },
-                                      new SpheroMovementType[]{ SpheroMovementType.PitchForward },
+                                      new SpheroMovementType[]{ SpheroMovementType.None },
             0),
             new GameSequence(2400, 6, new Color[]{ Colors.Red,
                                                    Colors.Blue,
@@ -869,7 +868,7 @@ namespace SensorialRhythm
             }
 
             if (_gameState2 == GameState.CheckMovement &&
-                _rewardElapsedTime.TotalMilliseconds > 500)
+                _rewardElapsedTime.TotalMilliseconds > 1000)
             {
                 if (_currentMovType == _currentSequence.Movements[_currentBeatTime])
                 {
