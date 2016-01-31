@@ -367,13 +367,11 @@ namespace SensorialRhythm
             {
                 if (_movType == SpheroMovementType.ShakeIt)
                 {
+                    _currentLevel = 0;
                     _gameState = GameState.ThreeTwoOneGo;
-                    _currentSequence = _gameSequence[0]; // starting sequence
+                    _currentSequence = _gameSequence[_currentLevel]; // starting sequence
                 }
             }
-
-            if (_gameState != GameState.ThreeTwoOneGo)
-                return;
 
             ProcessLevel(args);
         }
@@ -460,33 +458,216 @@ namespace SensorialRhythm
             public int Times;
             public Color[] Colors;
             public SpheroMovementType[] Movements;
+            public int TempoColorSwitch;
 
-            public GameSequence(int tempo, int times, Color[] colors, SpheroMovementType[] movements)
+            public GameSequence(int tempo, int times, Color[] colors, SpheroMovementType[] movements, int tempoColorSwitch)
             {
                 Tempo = tempo;
                 Times = times;
                 Colors = colors;
                 Movements = movements;
+                TempoColorSwitch = tempoColorSwitch;
             }
         }
 
         // Sequence numbers correspond to Level UPs
         GameSequence[] _gameSequence = {
+            new GameSequence(1, 1, new Color[]{ Color.FromArgb(255, 0, 255, 0), // green, 
+            },
+                                      new SpheroMovementType[]{ SpheroMovementType.PitchForward },
+            0),
             new GameSequence(2400, 7, new Color[]{ Colors.Red,
                                                    Colors.Blue,
                                                    Color.FromArgb(255, 0, 255, 0), // green
                                                    Colors.White,
                                                    Color.FromArgb(255, 0, 255, 0), // green
                                                    Colors.Red,
-                                                   Colors.Blue }, 
+                                                   Colors.White }, 
                                       new SpheroMovementType[]{ SpheroMovementType.PitchForward,
                                                                 SpheroMovementType.PitchBackwards,
                                                                 SpheroMovementType.RollLeft,
                                                                 SpheroMovementType.RollRight,
                                                                 SpheroMovementType.PitchBackwards,
                                                                 SpheroMovementType.RollLeft,
-                                                                SpheroMovementType.PitchForward }
-            )
+                                                                SpheroMovementType.PitchForward },
+            0),
+            new GameSequence(480, 2, new Color[]{ Colors.Blue,
+                                                Colors.White 
+            },
+                                      new SpheroMovementType[]{ SpheroMovementType.PitchForward,
+                                                                SpheroMovementType.PitchForward},
+            0),
+            new GameSequence(1420, 1, new Color[]{ Color.FromArgb(255, 0, 255, 0), // green, 
+            },
+                                      new SpheroMovementType[]{ SpheroMovementType.PitchForward },
+            0),
+            new GameSequence(480, 2, new Color[]{ Colors.Blue,
+                                                Colors.White
+            },
+                                      new SpheroMovementType[]{ SpheroMovementType.PitchForward },
+            0),
+            new GameSequence(1420, 1, new Color[]{ Colors.Red,
+                                                   Colors.Blue,
+                                                   Color.FromArgb(255, 0, 255, 0), // green
+                                                   Colors.White,
+                                                   Color.FromArgb(255, 0, 255, 0), // green
+                                                   Colors.Red,
+                                                   Colors.Blue,
+                                                   Colors.Red,
+                                                   Colors.Blue,
+                                                   Color.FromArgb(255, 0, 255, 0), // green
+                                                   Colors.White,
+                                                   Color.FromArgb(255, 0, 255, 0), // green
+                                                   Colors.Red,
+                                                   Colors.Blue},
+                                      new SpheroMovementType[]{ SpheroMovementType.PitchForward,
+                                                                SpheroMovementType.PitchBackwards,
+                                                                SpheroMovementType.RollLeft,
+                                                                SpheroMovementType.RollRight,
+                                                                SpheroMovementType.PitchBackwards,
+                                                                SpheroMovementType.RollLeft,
+                                                                SpheroMovementType.PitchForward },
+            0),
+            new GameSequence(480, 2, new Color[]{ Colors.Blue,
+                                                Colors.White
+            },
+                                      new SpheroMovementType[]{ SpheroMovementType.PitchForward },
+            0),
+            new GameSequence(1420, 1, new Color[]{ Colors.Red,
+                                                   Colors.Blue,
+                                                   Color.FromArgb(255, 0, 255, 0), // green
+                                                   Colors.White,
+                                                   Color.FromArgb(255, 0, 255, 0), // green
+                                                   Colors.Red,
+                                                   Colors.Blue,
+                                                   Colors.Red,
+                                                   Colors.Blue,
+                                                   Color.FromArgb(255, 0, 255, 0), // green
+                                                   Colors.White,
+                                                   Color.FromArgb(255, 0, 255, 0), // green
+                                                   Colors.Red,
+                                                   Colors.Blue},
+                                      new SpheroMovementType[]{ SpheroMovementType.PitchForward,
+                                                                SpheroMovementType.PitchBackwards,
+                                                                SpheroMovementType.RollLeft,
+                                                                SpheroMovementType.RollRight,
+                                                                SpheroMovementType.PitchBackwards,
+                                                                SpheroMovementType.RollLeft,
+                                                                SpheroMovementType.PitchForward },
+            0),
+            new GameSequence(480, 2, new Color[]{ Colors.Blue,
+                                                Colors.White
+            },
+                                      new SpheroMovementType[]{ SpheroMovementType.PitchForward },
+            0),
+            new GameSequence(1420, 1, new Color[]{ Colors.Red,
+                                                   Colors.Blue,
+                                                   Color.FromArgb(255, 0, 255, 0), // green
+                                                   Colors.White,
+                                                   Color.FromArgb(255, 0, 255, 0), // green
+                                                   Colors.Red,
+                                                   Colors.Blue,
+                                                   Colors.Red,
+                                                   Colors.Blue,
+                                                   Color.FromArgb(255, 0, 255, 0), // green
+                                                   Colors.White,
+                                                   Color.FromArgb(255, 0, 255, 0), // green
+                                                   Colors.Red,
+                                                   Colors.Blue},
+                                      new SpheroMovementType[]{ SpheroMovementType.PitchForward,
+                                                                SpheroMovementType.PitchBackwards,
+                                                                SpheroMovementType.RollLeft,
+                                                                SpheroMovementType.RollRight,
+                                                                SpheroMovementType.PitchBackwards,
+                                                                SpheroMovementType.RollLeft,
+                                                                SpheroMovementType.PitchForward },
+            0),
+            new GameSequence(480, 2, new Color[]{ Colors.Blue,
+                                                Colors.White
+            },
+                                      new SpheroMovementType[]{ SpheroMovementType.PitchForward },
+            0),
+            new GameSequence(1420, 1, new Color[]{ Colors.Red,
+                                                   Colors.Blue,
+                                                   Color.FromArgb(255, 0, 255, 0), // green
+                                                   Colors.White,
+                                                   Color.FromArgb(255, 0, 255, 0), // green
+                                                   Colors.Red,
+                                                   Colors.Blue,
+                                                   Colors.Red,
+                                                   Colors.Blue,
+                                                   Color.FromArgb(255, 0, 255, 0), // green
+                                                   Colors.White,
+                                                   Color.FromArgb(255, 0, 255, 0), // green
+                                                   Colors.Red,
+                                                   Colors.Blue},
+                                      new SpheroMovementType[]{ SpheroMovementType.PitchForward,
+                                                                SpheroMovementType.PitchBackwards,
+                                                                SpheroMovementType.RollLeft,
+                                                                SpheroMovementType.RollRight,
+                                                                SpheroMovementType.PitchBackwards,
+                                                                SpheroMovementType.RollLeft,
+                                                                SpheroMovementType.PitchForward },
+            0),
+            new GameSequence(480, 2, new Color[]{ Colors.Blue,
+                                                Colors.White
+            },
+                                      new SpheroMovementType[]{ SpheroMovementType.PitchForward },
+            0),
+            new GameSequence(1420, 1, new Color[]{ Colors.Red,
+                                                   Colors.Blue,
+                                                   Color.FromArgb(255, 0, 255, 0), // green
+                                                   Colors.White,
+                                                   Color.FromArgb(255, 0, 255, 0), // green
+                                                   Colors.Red,
+                                                   Colors.Blue,
+                                                   Colors.Red,
+                                                   Colors.Blue,
+                                                   Color.FromArgb(255, 0, 255, 0), // green
+                                                   Colors.White,
+                                                   Color.FromArgb(255, 0, 255, 0), // green
+                                                   Colors.Red,
+                                                   Colors.Blue},
+                                      new SpheroMovementType[]{ SpheroMovementType.PitchForward,
+                                                                SpheroMovementType.PitchBackwards,
+                                                                SpheroMovementType.RollLeft,
+                                                                SpheroMovementType.RollRight,
+                                                                SpheroMovementType.PitchBackwards,
+                                                                SpheroMovementType.RollLeft,
+                                                                SpheroMovementType.PitchForward },
+            0),
+            new GameSequence(480, 2, new Color[]{ Colors.Blue,
+                                                Colors.White
+            },
+                                      new SpheroMovementType[]{ SpheroMovementType.PitchForward },
+            0),
+            new GameSequence(1420, 1, new Color[]{ Colors.Red,
+                                                   Colors.Blue,
+                                                   Color.FromArgb(255, 0, 255, 0), // green
+                                                   Colors.White,
+                                                   Color.FromArgb(255, 0, 255, 0), // green
+                                                   Colors.Red,
+                                                   Colors.Blue,
+                                                   Colors.Red,
+                                                   Colors.Blue,
+                                                   Color.FromArgb(255, 0, 255, 0), // green
+                                                   Colors.White,
+                                                   Color.FromArgb(255, 0, 255, 0), // green
+                                                   Colors.Red,
+                                                   Colors.Blue},
+                                      new SpheroMovementType[]{ SpheroMovementType.PitchForward,
+                                                                SpheroMovementType.PitchBackwards,
+                                                                SpheroMovementType.RollLeft,
+                                                                SpheroMovementType.RollRight,
+                                                                SpheroMovementType.PitchBackwards,
+                                                                SpheroMovementType.RollLeft,
+                                                                SpheroMovementType.PitchForward },
+            0),
+            new GameSequence(480, 2, new Color[]{ Colors.Blue,
+                                                Colors.White
+            },
+                                      new SpheroMovementType[]{ SpheroMovementType.PitchForward },
+            0)
         };
 
         int _currentLevel = 0;
@@ -497,6 +678,21 @@ namespace SensorialRhythm
 
         void ProcessLevel(CanvasAnimatedUpdateEventArgs args)
         {
+            if (_gameState == GameState.LevelUp)
+            {
+                _currentLevel++;
+                if (_currentLevel > _gameSequence.Length - 1)
+                    _currentLevel = _gameSequence.Length - 1;
+                _currentBeatTime = 0;
+                _currentSequence = _gameSequence[_currentLevel];
+                _currentElapsedTime = TimeSpan.Zero;
+
+                _gameState = GameState.ThreeTwoOneGo;
+            }
+
+            if (_gameState != GameState.ThreeTwoOneGo)
+                return;
+
             if (!_tribal.IsPlaying)
             {
                 _tribal.Play();
@@ -529,28 +725,33 @@ namespace SensorialRhythm
 
             if (_currentBeatTime < _currentSequence.Times)
             {
-                if (_currentElapsedTime.TotalMilliseconds > _currentSequence.Tempo /** (_currentBeatTime + 1)*/)
+                if (_currentElapsedTime.TotalMilliseconds > _currentSequence.Tempo ||
+                    _currentElapsedTime.TotalMilliseconds > _currentSequence.Tempo + _currentSequence.TempoColorSwitch)
                 {
                     _currentColor = _currentSequence.Colors[_currentBeatTime];
-                    _currentElapsedTime = TimeSpan.Zero;
+                    if (_currentElapsedTime.TotalMilliseconds > _currentSequence.Tempo + _currentSequence.TempoColorSwitch)
+                        _currentElapsedTime = TimeSpan.Zero;
 
                     _robot.SetRGBLED(_currentColor.R,
                                      _currentColor.G,
                                      _currentColor.B);
 
                     _currentBeatTime++;
+
+                    if (_currentBeatTime == _currentSequence.Times)
+                        _gameState = GameState.LevelUp;
                 }
             }
 
-            if (_currentBeatTime >= _currentSequence.Times)
+            if (_currentBeatTime >= _currentSequence.Times && 
+                _movType == SpheroMovementType.ShakeIt)
             {
-                if (_movType == SpheroMovementType.ShakeIt)
-                {
-                    _movType = SpheroMovementType.None;
-                    _tribal.Stop();
-                    _currentBeatTime = 0;
-                    _currentElapsedTime = TimeSpan.Zero;
-                }
+                _movType = SpheroMovementType.None;
+                _tribal.Stop();
+
+                _currentBeatTime = 0;
+                _currentLevel = 0;
+                _currentElapsedTime = TimeSpan.Zero;
             }
         }
     }
