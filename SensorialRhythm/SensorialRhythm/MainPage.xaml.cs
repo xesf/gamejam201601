@@ -455,18 +455,22 @@ namespace SensorialRhythm
 
             _movType = SpheroMovementType.None;
 
-            if (_gyroscopeX > maxValue)
-                _movType = SpheroMovementType.PitchForward;
-            else if (_gyroscopeX < minValue)
-                _movType = SpheroMovementType.PitchBackwards;
-            else if (_gyroscopeY > maxValue)
-                _movType = SpheroMovementType.RollLeft;
-            else if (_gyroscopeY < minValue)
-                _movType = SpheroMovementType.RollRight;
-            else if (_gyroscopeZ > maxValue)
-                _movType = SpheroMovementType.YawlCounterClockwise;
-            else if (_gyroscopeZ < minValue)
-                _movType = SpheroMovementType.YawlClockwise;
+            //if (_gameState2 == GameState.CheckMovement)
+            {
+                if (_gyroscopeX > maxValue)
+                    _movType = SpheroMovementType.PitchForward;
+                else if (_gyroscopeX < minValue && _movType == SpheroMovementType.None)
+                    _movType = SpheroMovementType.PitchBackwards;
+                else if (_gyroscopeY > maxValue && _movType == SpheroMovementType.None)
+                    _movType = SpheroMovementType.RollLeft;
+                else if (_gyroscopeY < minValue && _movType == SpheroMovementType.None)
+                    _movType = SpheroMovementType.RollRight;
+                else if (_gyroscopeZ > maxValue && _movType == SpheroMovementType.None)
+                    _movType = SpheroMovementType.YawlCounterClockwise;
+                else if (_gyroscopeZ < minValue && _movType == SpheroMovementType.None)
+                    _movType = SpheroMovementType.YawlClockwise;
+
+            }
 
             if (_gyroscopeX > maxShakeValue || _gyroscopeX < minShakeValue ||
                 _gyroscopeY > maxShakeValue || _gyroscopeY < minShakeValue ||
@@ -529,7 +533,7 @@ namespace SensorialRhythm
 
                 args.DrawingSession.DrawText(string.Format("Level {0}/{1}", _currentLevel, _gameSequence.Length), (float)sender.Size.Width - 200, 20, Colors.DarkOrange, _uiTextFormat);
                 args.DrawingSession.DrawText(string.Format("Points {0}", _points), (float)sender.Size.Width - 200, 70, Colors.DarkOrange, _uiTextFormat);
-
+                args.DrawingSession.DrawText(string.Format("Lives {0}", 6 - _numFails), (float)sender.Size.Width - 200, 130, Colors.DarkOrange, _uiTextFormat);
 
                 if (!(_currentBeatTime < 1 && _currentLevel < 2))
                 {
@@ -892,11 +896,14 @@ namespace SensorialRhythm
             if (_gameState2 == GameState.CheckMovement &&
                 _rewardElapsedTime.TotalMilliseconds > 1000)
             {
-                if (_currentMovType == _currentSequence.Movements[_currentBeatTime])
+                int beat = _currentBeatTime - 1;
+                if (beat < 0)
+                    beat = 0;
+                if (_currentMovType == _currentSequence.Movements[beat])
                 {
                     _gameState2 = GameState.GotPoints;
                     _currentIdxReward = RAND.Next(0, _rewardMessage.Length - 1);
-                    _points += (_currentIdxReward + 1) * _currentLevel * _currentBeatTime;
+                    _points += (_currentIdxReward + 1) * _currentLevel * beat;
                 }
                 else
                 {
@@ -935,6 +942,7 @@ namespace SensorialRhythm
                 _movType == SpheroMovementType.ShakeIt)
             {
                 _movType = SpheroMovementType.None;
+                _currentMovType = SpheroMovementType.None;
                 _tribal.Stop();
 
                 _currentBeatTime = 0;
