@@ -480,26 +480,33 @@ namespace SensorialRhythm
             args.DrawingSession.FillEllipse(centerShadow, 300, 50, brush);
 
 
-
-
-            // UI sequence
-            int x = 0;
-            for (int s = 0; s < _gameSequence.Length; s++)
+            if (_gameState == GameState.ThreeTwoOneGo || _gameState == GameState.LevelUp)
             {
-                var seq = _gameSequence[s];
-                for (int t = 0; t < seq.Times; t++)
-                {
-                    SpheroCircleSmall spheroUI = new SpheroCircleSmall(50, seq.Colors[t]);
-                    spheroUI.Draw(_posSpheroSeq + new Vector2(x,0), args.DrawingSession);
-                    x += 150;
-                }
-                //x += 150;
-            }
+                args.DrawingSession.DrawLine((float)sender.Size.Width - 375,
+                                        ((float)sender.Size.Height / 2f) + 20 - 75,
+                                        (float)sender.Size.Width - 375, ((float)sender.Size.Height / 2f) + 20 + 75, Colors.DarkOrange, 4);
 
+                args.DrawingSession.DrawLine((float)sender.Size.Width - 225,
+                                            ((float)sender.Size.Height / 2f) + 20 - 125,
+                                            (float)sender.Size.Width - 225, ((float)sender.Size.Height / 2f) + 20 + 125, Colors.DarkOrange, 4);
+
+                // UI sequence
+                int x = 0;
+                for (int s = 0; s < _gameSequence.Length; s++)
+                {
+                    var seq = _gameSequence[s];
+                    for (int t = 0; t < seq.Times; t++)
+                    {
+                        SpheroCircleSmall spheroUI = new SpheroCircleSmall(50, seq.Colors[t]);
+                        spheroUI.Draw(_posSpheroSeq + new Vector2(x, 0), args.DrawingSession);
+                        x += 150;
+                    }
+                    //x += 150;
+                }
+            }
+            
             SpheroCircle sphero = new SpheroCircle(150, _currentColor);
             sphero.Draw(centerScreen, args.DrawingSession);
-
-            
 
 
             // Debug
