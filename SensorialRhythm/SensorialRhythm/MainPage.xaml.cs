@@ -121,9 +121,9 @@ namespace SensorialRhythm
         GameState _gameState = GameState.None;
 
 
-        SoundEffect _anthem = new SoundEffect(@"Sound\Amhran_na_bhFiann.wav");
+        //SoundEffect _anthem = new SoundEffect(@"Sound\Amhran_na_bhFiann.wav");
 
-        SoundEffect _tribal = new SoundEffect(@"Sound\african_tribal.wav");
+        SoundEffect _tribal = new SoundEffect(@"Sound\african_tribal_short.wav");
 
 
         // debug
