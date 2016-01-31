@@ -10,7 +10,7 @@
 
     <Grid Background="{ThemeResource ApplicationHeaderForegroundThemeBrush}">
         <Grid>
-            <canvas:CanvasAnimatedControl Width="1368" Height="819" Name="animatedControl" IsFixedTimeStep="True" Update="CanvasAnimatedControl_Update" Draw="CanvasAnimatedControl_Draw" ClearColor="CornflowerBlue"/>
+            <canvas:CanvasAnimatedControl Width="1368" Height="819" Name="animatedControl" IsFixedTimeStep="True" CreateResources="animatedControl_CreateResources" Update="CanvasAnimatedControl_Update" Draw="CanvasAnimatedControl_Draw" ClearColor="CornflowerBlue"/>
         </Grid>
     </Grid>
 </Page>

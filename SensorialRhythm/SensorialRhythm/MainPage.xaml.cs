@@ -26,6 +26,7 @@ using Microsoft.Graphics.Canvas.Text;
 using SharpDX.XAudio2;
 using SharpDX.Multimedia;
 using SharpDX.IO;
+using System.Threading.Tasks;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -87,7 +88,8 @@ namespace SensorialRhythm
         float _gyroscopeY = 0;
         float _gyroscopeZ = 0;
 
-        public enum SpheroMovementType {
+        public enum SpheroMovementType
+        {
             None,
             PitchForward,
             PitchBackwards,
@@ -101,7 +103,7 @@ namespace SensorialRhythm
         SpheroMovementType _movType = SpheroMovementType.None;
         SpheroMovementType _currentMovType = SpheroMovementType.None;
 
-        public string [] SpheroMovementTypeCharacters = 
+        public string[] SpheroMovementTypeCharacters =
         {
             "", //None,
             "\u00DD", //PitchForward,
@@ -164,7 +166,10 @@ namespace SensorialRhythm
         CanvasTextFormat _debugTextFormat = new CanvasTextFormat();
         CanvasTextFormat _debugSequenceTextFormat = new CanvasTextFormat();
 
-        public class SpheroColor {
+        CanvasBitmap _logo;
+
+        public class SpheroColor
+        {
             public Color _main;
             public Color _inner;
             public Color _outter;
@@ -229,9 +234,10 @@ namespace SensorialRhythm
 
             initFontSize();
         }
-        
+
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+
         }
 
         #region Sphero Connection
@@ -392,6 +398,8 @@ namespace SensorialRhythm
 
         private void CanvasAnimatedControl_Update(ICanvasAnimatedControl sender, CanvasAnimatedUpdateEventArgs args)
         {
+
+
             if (_gameState == GameState.Connecting)
             {
                 if (_robot.ConnectionState == ConnectionState.Failed/* ||
@@ -427,10 +435,11 @@ namespace SensorialRhythm
                     _currentBeatTime = 0;
                     _gameState = GameState.ThreeTwoOneGo;
                     _currentSequence = _gameSequence[_currentLevel]; // starting sequence
-                    //if (_posSpheroSeq == Vector2.Zero)
-                    //{
-                        _posSpheroSeq = new Vector2((float)sender.Size.Width - 300, ((float)sender.Size.Height / 2f) + 20);
+                                                                     //if (_posSpheroSeq == Vector2.Zero)
+                                                                     //{
+                    _posSpheroSeq = new Vector2((float)sender.Size.Width - 300, ((float)sender.Size.Height / 2f) + 20);
                     //}
+                    _robot.SetRGBLED(255, 0, 0);
                 }
             }
 
@@ -474,6 +483,8 @@ namespace SensorialRhythm
 
         private void initFontSize()
         {
+
+
             // INIT
             _debugTextFormat.FontSize = 12;
             _debugSequenceTextFormat.FontSize = 16;
@@ -493,6 +504,12 @@ namespace SensorialRhythm
             Vector2 centerScreen = new Vector2((float)sender.Size.Width / 2, ((float)sender.Size.Height / 2f) + 20);
             Vector2 centerShadow = new Vector2((float)sender.Size.Width / 2, ((float)sender.Size.Height / 2f) + 180);
 
+            if (_gameState == GameState.Connected ||
+                _gameState == GameState.Connecting ||
+                _gameState == GameState.ConnectionFailed)
+            {
+                args.DrawingSession.DrawImage(_logo, centerScreen + new Vector2((float)-_logo.Size.Width/2, (float)-_logo.Size.Height/2));
+            }
             args.DrawingSession.DrawText("Sensorial Rhythm", 20, 20, Colors.DarkOrange, _gameNameTextFormat);
 
             if (_gameState == GameState.Ready)
@@ -566,7 +583,7 @@ namespace SensorialRhythm
                         SpheroCircleSmall spheroUI = new SpheroCircleSmall(50, seq.Colors[t]);
                         spheroUI.Draw(_posSpheroSeq + new Vector2(x, 0), args.DrawingSession);
 
-                        args.DrawingSession.DrawText(SpheroMovementTypeCharacters[(int)seq.Movements[t]], 
+                        args.DrawingSession.DrawText(SpheroMovementTypeCharacters[(int)seq.Movements[t]],
                                                      _posSpheroSeq + new Vector2(x - 15, -25),
                                                      Colors.Black, _uiSequenceTextFormat);
 
@@ -575,10 +592,14 @@ namespace SensorialRhythm
                     //x += 150;
                 }
             }
-            
-            SpheroCircle sphero = new SpheroCircle(150, _currentColor);
-            sphero.Draw(centerScreen, args.DrawingSession);
 
+            if (!(_gameState == GameState.Connected ||
+                _gameState == GameState.Connecting ||
+                _gameState == GameState.ConnectionFailed))
+            {
+                SpheroCircle sphero = new SpheroCircle(150, _currentColor);
+                sphero.Draw(centerScreen, args.DrawingSession);
+            }
 
             // Debug
             args.DrawingSession.DrawText("Game State: " + _gameState, 10, (float)sender.Size.Height - 130, Colors.Gray, _debugTextFormat);
@@ -592,7 +613,8 @@ namespace SensorialRhythm
         }
 
         // Game Sequence
-        public struct GameSequence {
+        public struct GameSequence
+        {
             public int Tempo;
             public int Times;
             public Color[] Colors;
@@ -621,17 +643,17 @@ namespace SensorialRhythm
                                                    Colors.White,
                                                    Color.FromArgb(255, 0, 255, 0), // green
                                                    Colors.Red,
-                                                   Colors.White }, 
+                                                   Colors.White },
                                       new SpheroMovementType[]{ SpheroMovementType.PitchForward,
-                                                                SpheroMovementType.PitchBackwards,
+                                                                SpheroMovementType.PitchForward,
                                                                 SpheroMovementType.RollLeft,
-                                                                SpheroMovementType.RollRight,
-                                                                SpheroMovementType.PitchBackwards,
                                                                 SpheroMovementType.RollLeft,
+                                                                SpheroMovementType.PitchBackwards,
+                                                                SpheroMovementType.PitchBackwards,
                                                                 SpheroMovementType.PitchForward },
             0),
             new GameSequence(480, 2, new Color[]{ Colors.Blue,
-                                                Colors.White 
+                                                Colors.White
             },
                                       new SpheroMovementType[]{ SpheroMovementType.PitchForward,
                                                                 SpheroMovementType.PitchForward},
@@ -920,7 +942,7 @@ namespace SensorialRhythm
                 _currentElapsedTime = TimeSpan.Zero;
             }
 
-            if (_numFails > 5)
+            if (_numFails > 6)
             {
                 _gameState = GameState.GameOver;
                 _movType = SpheroMovementType.None;
@@ -933,5 +955,18 @@ namespace SensorialRhythm
                 _currentElapsedTime = TimeSpan.Zero;
             }
         }
-    }
+
+        private void animatedControl_CreateResources(CanvasAnimatedControl sender, Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs args)
+        {
+            args.TrackAsyncAction(CreateResourcesAsync(sender).AsAsyncAction());
+        }
+
+        async Task CreateResourcesAsync(CanvasAnimatedControl sender)
+        {
+            if (_logo == null)
+            {
+                _logo = await CanvasBitmap.LoadAsync(sender, "Assets/ggj16.png");
+            }
+        }
+    } 
 }
