@@ -100,6 +100,19 @@ namespace SensorialRhythm
         };
         SpheroMovementType _movType = SpheroMovementType.None;
 
+        public string [] SpheroMovementTypeCharacters = 
+        {
+            "", //None,
+            "\u00DD", //PitchForward,
+            "\u00DF", //PitchBackwards,
+            "\u00DC", //RollLeft,
+            "\u00DE", //RollRight,
+            "", //YawlClockwise,
+            "", //YawlCounterClockwise,
+            "\u00DB", //ShakeIt,
+            ""  //DoubleTap
+        };
+
         public enum SpheroTapType
         {
             None,
@@ -127,6 +140,7 @@ namespace SensorialRhythm
 
         CanvasTextFormat _gameNameTextFormat = new CanvasTextFormat();
         CanvasTextFormat _uiTextFormat = new CanvasTextFormat();
+        CanvasTextFormat _uiSequenceTextFormat = new CanvasTextFormat();
         // debug
         CanvasTextFormat _debugTextFormat = new CanvasTextFormat();
         CanvasTextFormat _debugSequenceTextFormat = new CanvasTextFormat();
@@ -437,6 +451,10 @@ namespace SensorialRhythm
 
             _gameNameTextFormat.FontSize = 48;
             _uiTextFormat.FontSize = 36;
+
+            _uiSequenceTextFormat.FontFamily = "Symbol";
+            _uiSequenceTextFormat.FontSize = 48;
+            //_uiSequenceTextFormat
         }
 
         private void CanvasAnimatedControl_Draw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
@@ -480,7 +498,7 @@ namespace SensorialRhythm
             args.DrawingSession.FillEllipse(centerShadow, 300, 50, brush);
 
 
-            if (_gameState == GameState.ThreeTwoOneGo || _gameState == GameState.LevelUp)
+            //if (_gameState == GameState.ThreeTwoOneGo || _gameState == GameState.LevelUp)
             {
                 args.DrawingSession.DrawLine((float)sender.Size.Width - 375,
                                         ((float)sender.Size.Height / 2f) + 20 - 75,
@@ -499,6 +517,11 @@ namespace SensorialRhythm
                     {
                         SpheroCircleSmall spheroUI = new SpheroCircleSmall(50, seq.Colors[t]);
                         spheroUI.Draw(_posSpheroSeq + new Vector2(x, 0), args.DrawingSession);
+
+                        args.DrawingSession.DrawText(SpheroMovementTypeCharacters[(int)seq.Movements[t]], 
+                                                     _posSpheroSeq + new Vector2(x - 15, -25),
+                                                     Colors.Black, _uiSequenceTextFormat);
+
                         x += 150;
                     }
                     //x += 150;
@@ -544,7 +567,7 @@ namespace SensorialRhythm
             },
                                       new SpheroMovementType[]{ SpheroMovementType.PitchForward },
             0),
-            new GameSequence(2400, 7, new Color[]{ Colors.Red,
+            new GameSequence(2400, 6, new Color[]{ Colors.Red,
                                                    Colors.Blue,
                                                    Color.FromArgb(255, 0, 255, 0), // green
                                                    Colors.White,
@@ -567,12 +590,13 @@ namespace SensorialRhythm
             0),
             new GameSequence(1420, 1, new Color[]{ Color.FromArgb(255, 0, 255, 0), // green, 
             },
-                                      new SpheroMovementType[]{ SpheroMovementType.PitchForward },
+                                      new SpheroMovementType[]{ SpheroMovementType.None },
             0),
             new GameSequence(480, 2, new Color[]{ Colors.Blue,
                                                 Colors.White
             },
-                                      new SpheroMovementType[]{ SpheroMovementType.PitchForward },
+                                      new SpheroMovementType[]{ SpheroMovementType.PitchBackwards,
+                                                                SpheroMovementType.PitchBackwards },
             0),
             new GameSequence(1420, 1, new Color[]{ Colors.Red,
                                                    Colors.Blue,
@@ -599,7 +623,8 @@ namespace SensorialRhythm
             new GameSequence(480, 2, new Color[]{ Colors.Blue,
                                                 Colors.White
             },
-                                      new SpheroMovementType[]{ SpheroMovementType.PitchForward },
+                                          new SpheroMovementType[]{ SpheroMovementType.RollLeft,
+                                                                    SpheroMovementType.RollRight },
             0),
             new GameSequence(1420, 1, new Color[]{ Colors.Red,
                                                    Colors.Blue,
@@ -626,7 +651,8 @@ namespace SensorialRhythm
             new GameSequence(480, 2, new Color[]{ Colors.Blue,
                                                 Colors.White
             },
-                                      new SpheroMovementType[]{ SpheroMovementType.PitchForward },
+                                      new SpheroMovementType[]{ SpheroMovementType.PitchBackwards,
+                                                                SpheroMovementType.PitchForward },
             0),
             new GameSequence(1420, 1, new Color[]{ Colors.Red,
                                                    Colors.Blue,
@@ -653,7 +679,8 @@ namespace SensorialRhythm
             new GameSequence(480, 2, new Color[]{ Colors.Blue,
                                                 Colors.White
             },
-                                      new SpheroMovementType[]{ SpheroMovementType.PitchForward },
+                                       new SpheroMovementType[]{ SpheroMovementType.RollRight,
+                                                                 SpheroMovementType.PitchBackwards },
             0),
             new GameSequence(1420, 1, new Color[]{ Colors.Red,
                                                    Colors.Blue,
@@ -680,7 +707,8 @@ namespace SensorialRhythm
             new GameSequence(480, 2, new Color[]{ Colors.Blue,
                                                 Colors.White
             },
-                                      new SpheroMovementType[]{ SpheroMovementType.PitchForward },
+                                       new SpheroMovementType[]{ SpheroMovementType.RollRight,
+                                                                 SpheroMovementType.PitchBackwards },
             0),
             new GameSequence(1420, 1, new Color[]{ Colors.Red,
                                                    Colors.Blue,
@@ -707,7 +735,8 @@ namespace SensorialRhythm
             new GameSequence(480, 2, new Color[]{ Colors.Blue,
                                                 Colors.White
             },
-                                      new SpheroMovementType[]{ SpheroMovementType.PitchForward },
+                                       new SpheroMovementType[]{ SpheroMovementType.RollRight,
+                                                                 SpheroMovementType.PitchBackwards },
             0),
             new GameSequence(1420, 1, new Color[]{ Colors.Red,
                                                    Colors.Blue,
@@ -734,7 +763,8 @@ namespace SensorialRhythm
             new GameSequence(480, 2, new Color[]{ Colors.Blue,
                                                 Colors.White
             },
-                                      new SpheroMovementType[]{ SpheroMovementType.PitchForward },
+                                       new SpheroMovementType[]{ SpheroMovementType.RollRight,
+                                                                 SpheroMovementType.PitchBackwards },
             0)
         };
 

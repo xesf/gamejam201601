@@ -8,10 +8,9 @@
     xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
     mc:Ignorable="d" Loaded="Page_Loaded">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource ApplicationHeaderForegroundThemeBrush}">
         <Grid>
-            <MediaElement x:Name="playSound" Source="Sound/Amhran_na_bhFiann.ogg" AutoPlay="False" Height="0" Width="0"  />
-            <canvas:CanvasAnimatedControl Name="animatedControl" IsFixedTimeStep="True" Update="CanvasAnimatedControl_Update" Draw="CanvasAnimatedControl_Draw" ClearColor="CornflowerBlue"/>
+            <canvas:CanvasAnimatedControl Width="1368" Height="819" Name="animatedControl" IsFixedTimeStep="True" Update="CanvasAnimatedControl_Update" Draw="CanvasAnimatedControl_Draw" ClearColor="CornflowerBlue"/>
         </Grid>
     </Grid>
 </Page>
