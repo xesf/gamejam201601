@@ -637,7 +637,7 @@ namespace SensorialRhythm
             },
                                       new SpheroMovementType[]{ SpheroMovementType.None },
             0),
-            new GameSequence(2400, 6, new Color[]{ Colors.Red,
+            new GameSequence(2400, 7, new Color[]{ Colors.Red,
                                                    Colors.Blue,
                                                    Color.FromArgb(255, 0, 255, 0), // green
                                                    Colors.White,
