@@ -483,13 +483,17 @@ namespace SensorialRhythm
 
 
             // UI sequence
-            foreach (var seq in _gameSequence)
+            int x = 0;
+            for (int s = 0; s < _gameSequence.Length; s++)
             {
+                var seq = _gameSequence[s];
                 for (int t = 0; t < seq.Times; t++)
                 {
                     SpheroCircleSmall spheroUI = new SpheroCircleSmall(50, seq.Colors[t]);
-                    spheroUI.Draw(_posSpheroSeq + new Vector2(150 * (t+1), 0), args.DrawingSession);
+                    spheroUI.Draw(_posSpheroSeq + new Vector2(x,0), args.DrawingSession);
+                    x += 150;
                 }
+                //x += 150;
             }
 
             SpheroCircle sphero = new SpheroCircle(150, _currentColor);
