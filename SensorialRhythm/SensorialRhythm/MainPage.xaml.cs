@@ -99,6 +99,7 @@ namespace SensorialRhythm
             DoubleTap
         };
         SpheroMovementType _movType = SpheroMovementType.None;
+        SpheroMovementType _currentMovType = SpheroMovementType.None;
 
         public string [] SpheroMovementTypeCharacters = 
         {
@@ -458,6 +459,11 @@ namespace SensorialRhythm
                 _gyroscopeZ > maxShakeValue || _gyroscopeZ < minShakeValue)
             {
                 _movType = SpheroMovementType.ShakeIt;
+            }
+
+            if (_movType != SpheroMovementType.None)
+            {
+                _currentMovType = _movType;
             }
         }
 
@@ -859,6 +865,12 @@ namespace SensorialRhythm
             _currentElapsedTime += _elapsedTime;
             //_currentSequence = _gameSequence[_currentLevel];
 
+            if ((_gameState2 == GameState.GotPoints || _gameState2 == GameState.Failed) &&
+                _currentElapsedTime.TotalMilliseconds > 1000)
+            {
+                _gameState2 = GameState.None;
+            }
+
             if (_currentBeatTime < _currentSequence.Times)
             {
                 _posSpheroSeq.X -= 1; // TODO syncronize the movement with the song and active color
@@ -886,7 +898,7 @@ namespace SensorialRhythm
             if (_gameState2 == GameState.CheckMovement &&
                 _currentElapsedTime.TotalMilliseconds > 1000)
             {
-                if (_movType == _currentSequence.Movements[_currentBeatTime])
+                if (_currentMovType == _currentSequence.Movements[_currentBeatTime])
                 {
                     _gameState2 = GameState.GotPoints;
                     _currentIdxReward = RAND.Next(0, _rewardMessage.Length - 1);
@@ -894,14 +906,9 @@ namespace SensorialRhythm
                 }
                 else
                 {
+                    _currentMovType = SpheroMovementType.None;
                     _gameState2 = GameState.Failed;
                 }
-            }
-
-            if (_gameState2 != GameState.None && // GotPoints or Failed
-                _currentElapsedTime.TotalMilliseconds > 1500)
-            {
-                _gameState2 = GameState.None;
             }
 
             if (_currentBeatTime >= _currentSequence.Times && 
